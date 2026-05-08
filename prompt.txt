@@ -1,0 +1,394 @@
+LIBROS Hackathon: Digitalna Demokracija na
+Solana Mreži
+Dobrodošli na LIBROS Hackathon! Danas niste samo programeri; vi ste arhitekti povjerenja u
+svijetu gdje se glasovi prečesto gube, mijenjaju ili ostaju skriveni u netransparentnim bazama
+podataka.
+Zamislite školski hodnik ili učionicu. Treba donijeti odluku: Kamo idemo na izlet? Koju boju
+majica biramo za kraj godine? Tko će nas predstavljati kao predsjednik razreda? U tradicionalnom
+svijetu, to su papirići u kutiji ili podignute ruke koje netko može krivo prebrojati. U našem svijetu,
+to su podaci koji moraju biti nepromjenjivi, javno provjerljivi i apsolutno sigurni.
+Vaš zadatak je izgraditi decentraliziranu aplikaciju koja će stati na kraj sumnjama. Koristeći
+snagu Solana blockchaina i preciznost Anchor frameworka, vaša misija je stvoriti sustav u kojem:
+• Identitet je ključ: Svaki korisnik pristupa glasanju putem svog Phantom walleta. Nema
+lažnih profila, samo kriptografski potvrđene adrese.
+• Transparentnost je zakon: Svako kreirano pitanje i svaki dani glas zapisuju se trajno na
+Devnet mrežu. Rezultati nisu pohranjeni na nečijem privatnom serveru, već su javno
+dostupni svima na uvid.
+• Integritet je neupitan: Jednom kada je glas predan, on je uklesan u digitalni kamen. Vaš
+smart contract mora osigurati da nitko – pa čak ni administrator – ne može promijeniti
+rezultat ili glasati dva puta.
+Projektni zadatak: Blockchain aplikacija za glasanje
+koristeći Solana i Anchor
+Opis zadatka
+Cilj projekta je razviti decentraliziranu web aplikaciju za glasanje koristeći:
+● Solana blockchain (Devnet)
+● Anchor framework za razvoj smart contracta u Rustu
+● Web frontend (React / Next.js)
+● Phantom wallet za autentifikaciju korisnika
+Aplikacija omogućava učenicima kreiranje anketa i glasanje za određene opcije (npr. izlet, film,
+majica razreda, predsjednik razreda itd.).
+Svi glasovi moraju biti zapisani na Solana blockchainu.
+Funkcionalni zahtjevi
+Obavezne funkcionalnosti
+1. Spajanje walleta
+Aplikacija mora omogućiti:
+● spajanje Phantom walleta
+● prikaz povezane wallet adrese
+● disconnect wallet opciju
+2. Kreiranje glasanja
+Korisnik mora moći:
+● kreirati novo glasanje
+● unijeti naslov pitanja
+● definirati više opcija za glasanje
+Primjer:
+Pitanje:
+“Gdje idemo na izlet?”
+Opcije:
+● Zadar
+● Split
+● Varaždin
+3. Glasanje na blockchainu
+Glasanje mora koristiti Solana smart contract.
+Potrebno je implementirati:
+● spremanje glasova na blockchain
+● pozivanje Anchor instrukcija
+● verifikaciju da wallet može glasati samo jednom
+● zabranu izmjene glasa
+● zabranu administratorskog mijenjanja glasova
+4. Prikaz rezultata
+Aplikacija mora prikazivati:
+● broj glasova po opciji
+● ukupni broj glasova
+● tko je glasao (wallet adrese)
+5. Pohrana podataka
+Svi podaci moraju biti spremljeni na Solana Devnet mreži:
+● glasanja
+● opcije
+● wallet adrese glasača
+● broj glasova
+Bonus funkcionalnosti
+Student može implementirati dodatne funkcionalnosti:
+● vremensko ograničenje glasanja
+● whitelist wallet adresa
+● zatvaranje glasanja
+● live osvježavanje rezultata
+● responzivan dizajn
+● deploy na Vercel
+● unit testovi
+● Docker podrška
+Tehnologije
+Obavezno
+● WSL2
+● Ubuntu
+● Rust
+● Solana CLI
+● Anchor Framework
+● Node.js
+● Phantom Wallet
+● React ili Next.js
+● TypeScript
+1. Instalacija razvojne okoline
+Korak 1 — Instalacija WSL2
+Windows PowerShell (Administrator)
+wsl --install
+Restart računala.
+Korak 2 — Instalacija Ubuntu distribucije
+Instalirati Ubuntu iz Microsoft Store-a.
+Preporučena verzija:
+● Ubuntu 22.04 LTS
+Nakon instalacije:
+sudo apt update && sudo apt upgrade -y
+2. Instalacija Node.js
+Instalacija NVM-a
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+Restart terminala.
+Instalacija Node.js
+nvm install --lts
+nvm use --lts
+Provjera:
+node -v
+npm -v
+3. Instalacija Rusta
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+Dodati Rust u PATH:
+source "$HOME/.cargo/env"
+Provjera:
+rustc --version
+cargo --version
+4. Instalacija Solana CLI alata
+sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+Dodati Solanu u PATH:
+export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+Provjera:
+solana --version
+5. Konfiguracija Solana Devnet mreže
+Postavljanje Devneta
+solana config set --url https://api.devnet.solana.com
+Provjera:
+solana config get
+Generiranje walleta
+solana-keygen new
+Provjera adrese:
+solana address
+Dohvaćanje Devnet SOL tokena
+solana airdrop 2
+Provjera stanja:
+solana balance
+6. Instalacija Anchor Frameworka
+Instalacija AVM-a (Anchor Version Manager)
+cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+Restart terminala.
+Instalacija Anchor verzije
+avm install latest
+avm use latest
+Provjera:
+anchor --version
+7. Instalacija Yarn-a
+npm install --global yarn
+Provjera:
+yarn -v
+8. Kreiranje Anchor projekta
+anchor init voting-dapp
+cd voting-dapp
+Struktura projekta:
+programs/ -> Rust smart contract
+app/ -> frontend aplikacija
+tests/ -> testovi
+Anchor.toml -> Anchor konfiguracija
+9. Pokretanje lokalnog validatora
+U jednom terminalu:
+solana-test-validator
+10. Build i deploy smart contracta
+Build
+anchor build
+Deploy
+anchor deploy
+11. Smart contract funkcionalnosti
+Student mora implementirati:
+Instrukcija: create_poll
+Kreira novo glasanje.
+Podaci:
+● naslov pitanja
+● opcije glasanja
+● autor glasanja
+● datum kreiranja
+Instrukcija: vote
+Omogućava glasanje.
+Mora:
+● zapisati wallet adresu
+● spremiti odabranu opciju
+● spriječiti duplo glasanje
+● povećati broj glasova
+Instrukcija: get_results
+Dohvaća rezultate glasanja.
+12. Struktura računa na blockchainu
+Poll Account
+Sadrži:
+● ID glasanja
+● naslov
+● opcije
+● broj glasova
+● autor
+● timestamp
+Vote Account
+Sadrži:
+● wallet adresu
+● poll ID
+● odabranu opciju
+● timestamp
+13. Frontend aplikacija
+Obavezne stranice
+Home
+Prikaz svih anketa.
+Create Poll
+Forma za kreiranje ankete.
+Poll Details
+Prikaz:
+● pitanja
+● opcija
+● rezultata
+● wallet adresa glasača
+14. Integracija Phantom walleta
+Potrebno implementirati:
+● connect wallet
+● disconnect wallet
+● provjeru je li wallet instaliran
+● prikaz connected state-a
+15. Preporučena struktura frontend projekta
+src/
+├── components/
+├── pages/
+├── hooks/
+├── services/
+├── idl/
+├── utils/
+└── styles/
+16. Korištenje Anchor IDL-a
+Student mora:
+● generirati IDL
+● koristiti IDL u frontend aplikaciji
+● pozivati Anchor metode iz React aplikacije
+17. Testiranje aplikacije
+Obavezno testirati:
+● kreiranje ankete
+● uspješno glasanje
+● zabranu duplog glasanja
+● prikaz rezultata
+Pokretanje testova
+anchor test
+18. Deploy frontend aplikacije
+Preporuka:
+● Vercel
+● Netlify
+Student mora predati:
+● GitHub repozitorij
+● deploy link
+● kratku dokumentaciju
+19. Preporučeni razvojni plan
+Faza 1 — Okolina
+● instalacija WSL-a
+● instalacija Solane
+● instalacija Anchor-a
+● test Devnet mreže
+Faza 2 — Smart contract
+● create_poll instrukcija
+● vote instrukcija
+● validacije
+● testovi
+Faza 3 — Frontend
+● wallet povezivanje
+● forma za ankete
+● prikaz podataka
+● blockchain integracija
+Faza 4 — Deploy i dokumentacija
+● deploy smart contracta
+● deploy frontenda
+● završno testiranje
+20. Očekivani ishod projekta
+Po završetku projekta student mora znati:
+● koristiti Solana CLI
+● koristiti Anchor framework
+● razvijati smart contracte u Rustu
+● povezati frontend sa Solanom
+● koristiti wallet autentifikaciju
+● raditi s blockchain računima
+● deployati decentraliziranu aplikaciju
+Kriteriji bodovanja
+Ukupno: 100 bodova
+Kategorija Bodovi
+Instalacija i konfiguracija okoline 10
+Solana i Anchor setup 10
+Smart contract logika 25
+Prevencija duplog glasanja 10
+Pohrana podataka na blockchain 10
+Frontend aplikacija 15
+Kategorija Bodovi
+Phantom wallet integracija 5
+Prikaz rezultata i wallet adresa 5
+Testiranje 5
+Dokumentacija i GitHub organizacija 5
+Bonus funkcionalnosti +10
+Detaljna razrada bodovanja
+1. Instalacija i konfiguracija okoline (10 bodova)
+Student:
+● uspješno instalira WSL
+● konfigurira Ubuntu
+● instalira Node.js
+● instalira Rust
+● instalira Solana CLI
+● instalira Anchor
+Bodovanje:
+● 0–4 = nepotpuna instalacija
+● 5–7 = većina alata radi
+● 8–10 = potpuno funkcionalna okolina
+2. Solana i Anchor setup (10 bodova)
+Student:
+● konfigurira Devnet
+● generira wallet
+● koristi airdrop
+● uspješno builda projekt
+● deploya smart contract
+3. Smart contract logika (25 bodova)
+Potrebno:
+● create_poll instrukcija
+● vote instrukcija
+● spremanje podataka
+● validacije
+● Anchor account strukture
+Bodovanje:
+● 0–10 = djelomična funkcionalnost
+● 11–20 = većina funkcionalnosti radi
+● 21–25 = potpuno funkcionalan contract
+4. Prevencija duplog glasanja (10 bodova)
+Aplikacija mora:
+● spriječiti više glasova s iste wallet adrese
+● zabraniti izmjenu glasa
+5. Pohrana podataka na blockchain (10 bodova)
+Potrebno:
+● pravilno spremanje account podataka
+● pravilno dohvaćanje podataka
+● konzistentnost podataka
+6. Frontend aplikacija (15 bodova)
+Ocjenjuje se:
+● funkcionalnost
+● UX/UI
+● navigacija
+● povezivanje s blockchainom
+● responzivnost
+7. Phantom wallet integracija (5 bodova)
+Potrebno:
+● connect/disconnect
+● prikaz wallet adrese
+● obrada grešaka
+8. Prikaz rezultata (5 bodova)
+Potrebno:
+● broj glasova
+● lista glasača
+● osvježavanje podataka
+9. Testiranje (5 bodova)
+Student mora:
+● napisati osnovne Anchor testove
+● demonstrirati funkcionalnost
+10. Dokumentacija i GitHub (5 bodova)
+Repozitorij mora sadržavati:
+● README
+● upute za pokretanje
+● opis projekta
+● organiziran kod
+Bonus bodovi (+10)
+Bonus funkcionalnost Bodovi
+Vremensko ograničenje glasanja +2
+Whitelist walleta +2
+Live update rezultata +2
+Docker podrška +2
+Deploy na Vercel +1
+Napredni UI/UX +1
+Završna predaja
+Student mora predati:
+1. GitHub link
+2. Deploy link
+3. README dokumentaciju
+4. Kratku video demonstraciju (opcionalno)
+Preporučeni alati
+Editor
+● VS Code
+VS Code ekstenzije
+● Rust Analyzer
+● Solana
+● Error Lens
+● ESLint
+● Prettier
+Preporučeni resursi
+Dokumentacija
+● Solana Docs
+● Anchor Docs
+● Phantom Wallet Docs
+● Rust Book
+Napomena za polaznike
+Fokus projekta nije samo izrada frontend aplikacije, nego razumijevanje:
+● blockchain arhitekture
+● rada sa smart contractima
+● decentralizirane pohrane podataka
+● wallet autentifikacije
+● sigurnosnih ograničenja kod glasanja
+Projekt treba biti funkcionalan, organiziran i jasno dokumentiran.
