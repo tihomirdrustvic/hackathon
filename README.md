@@ -2,6 +2,7 @@
 
 <img width="2800" height="1526" alt="image" src="https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151" />
 
+
 > Izgrađeno za **LIBROS Hackathon 2026** — Blockchain aplikacija za glasanje koristeći Solana i Anchor framework.
 
 🔗 **Live Demo (Vercel):** [hackathon-ruby-nine.vercel.app](https://hackathon-ruby-nine.vercel.app/)
