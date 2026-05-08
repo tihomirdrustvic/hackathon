@@ -113,6 +113,3 @@ Naš Anchor program izlaže četiri glavne instrukcije za klijentsku interakciju
 *Dizajnirano i razvijeno za LIBROS Hackathon 2026.*
 
 ```
-sliku (skalabilnost, UX, infrastruktura). Sretno na ocjenjivanju!
-
-```
