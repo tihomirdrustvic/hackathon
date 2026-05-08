@@ -358,7 +358,7 @@ export default function Home() {
 
           <div className="benefits-grid">
             {[
-              ["🔒", "Nula Povjerenja", "Ne morate vjerovati organizatoru ili serveru. Solana smart contract autonomno provodi sva pravila.", "blue"],
+              ["🔒", "Maksimalno Povjerenja", "Ne morate vjerovati organizatoru ili serveru. Solana smart contract autonomno provodi sva pravila.", "blue"],
               ["🌍", "Javno Provjerljivo", "Svaki glas je javno provjerljiv, zajedno s ukupnim rezultatom i wallet adresama glasača.", "green"],
               ["⚡", "Munjevita Brzina", "Solana Devnet omogućuje brzo kreiranje anketa i brzo slanje glasova putem Phantom walleta.", "amber"],
               ["💎", "Trajni Zapis", "Blockchain podaci su nepromjenjivi. Jednom zapisan glas ne može se izmijeniti.", "violet"],
