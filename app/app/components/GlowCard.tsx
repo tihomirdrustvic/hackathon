@@ -3,19 +3,25 @@ import React, { CSSProperties, useEffect, useRef, ReactNode } from 'react';
 interface GlowCardProps {
   children: ReactNode;
   className?: string;
-  glowColor?: 'blue' | 'purple' | 'green' | 'red' | 'orange';
+  glowColor?: 'blue' | 'purple' | 'indigo' | 'violet' | 'green' | 'red' | 'rose' | 'orange' | 'amber' | 'cyan';
   size?: 'sm' | 'md' | 'lg';
   width?: string | number;
   height?: string | number;
   customSize?: boolean; // When true, ignores size prop and uses width/height or className
+  bare?: boolean; // When true, skips default layout classes (grid, p-4, etc.)
 }
 
 const glowColorMap = {
-  blue: { base: 220, spread: 200 },
+  blue:   { base: 220, spread: 200 },
   purple: { base: 280, spread: 300 },
-  green: { base: 120, spread: 200 },
-  red: { base: 0, spread: 200 },
-  orange: { base: 30, spread: 200 }
+  indigo: { base: 240, spread: 260 },
+  violet: { base: 270, spread: 280 },
+  green:  { base: 120, spread: 200 },
+  red:    { base: 0,   spread: 200 },
+  rose:   { base: 345, spread: 200 },
+  orange: { base: 30,  spread: 200 },
+  amber:  { base: 45,  spread: 200 },
+  cyan:   { base: 190, spread: 200 },
 };
 
 const sizeMap = {
@@ -31,7 +37,8 @@ const GlowCard: React.FC<GlowCardProps> = ({
   size = 'md',
   width,
   height,
-  customSize = false
+  customSize = false,
+  bare = false,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -169,14 +176,9 @@ const GlowCard: React.FC<GlowCardProps> = ({
         className={`
           ${getSizeClasses()}
           ${!customSize ? 'aspect-[3/4]' : ''}
+          ${!bare ? 'grid grid-rows-[1fr_auto] shadow-[0_1rem_2rem_-1rem_black] p-4 gap-4 backdrop-blur-[5px]' : ''}
           rounded-2xl 
           relative 
-          grid 
-          grid-rows-[1fr_auto] 
-          shadow-[0_1rem_2rem_-1rem_black] 
-          p-4 
-          gap-4 
-          backdrop-blur-[5px]
           ${className}
         `}
       >
