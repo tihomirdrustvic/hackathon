@@ -1,7 +1,7 @@
 # 🗳️ VoteDApp — Decentralizirani Sustav Glasanja
 
 <p align="center">
-  <img width="100%" height="auto" alt="VoteDApp Sučelje" src="[https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151](https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151)" />
+  <img width="100%" height="auto" alt="VoteDApp Sučelje" src="https://github.com/user-attachments/assets/631eeddd-02d4-4ce1-a0d8-d2d6e98199a8" />
 </p>
 
 ---
