@@ -38,260 +38,332 @@ export default function Home() {
     fetchPolls();
   }, [fetchPolls]);
 
-  // ─── Live auto-refresh every 15 seconds (bonus) ─────────
+  // Live auto-refresh every 15 seconds (bonus)
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchPolls();
-    }, 15000);
+    const interval = setInterval(fetchPolls, 15000);
     return () => clearInterval(interval);
   }, [fetchPolls]);
 
+  const totalVotes = polls.reduce(
+    (acc, p) => acc + p.account.totalVotes.toNumber(),
+    0
+  );
+
   return (
-    <div className="animate-fade-in-up space-y-10">
-      {/* ─── Hero Section ───────────────────────────────────── */}
-      <div className="text-center space-y-5 py-8 sm:py-14">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 mb-4">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          Solana Devnet • Aktivno
+    <div className="animate-fade-up">
+      {/* ─── Hero ───────────────────────────────────────────── */}
+      <section className="text-center py-16 sm:py-24">
+        <div className="section-tag mb-10" style={{ animation: "fadeUp 1s 0.3s ease both" }}>
+          <span
+            className="w-2 h-2 rounded-full flex-shrink-0 animate-pulse-green"
+            style={{ background: "rgba(244, 63, 94, 0.8)" }}
+          />
+          <span>LIBROS Hackathon 2026</span>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl font-black tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-            Decentralizirano
-          </span>
-          <br />
-          <span className="text-white/90">Glasanje</span>
+        <h1
+          className="font-display font-extrabold leading-none mb-7"
+          style={{
+            fontSize: "clamp(48px, 7vw, 88px)",
+            letterSpacing: "-0.03em",
+            animation: "fadeUp 1s 0.5s ease both",
+          }}
+        >
+          <span className="text-gradient-white block">Glasaj Bez</span>
+          <span className="text-gradient block">Kompromisa</span>
         </h1>
 
-        <p className="text-base sm:text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
-          Kreirajte ankete i glasajte trajno na Solana blockchainu.
-          <br className="hidden sm:block" />
-          Svaki glas je kriptografski siguran i javno provjerljiv.
+        <p
+          className="max-w-[520px] mx-auto mb-12 leading-relaxed"
+          style={{
+            fontSize: "clamp(15px, 2vw, 19px)",
+            color: "rgba(255,255,255,0.4)",
+            fontWeight: 300,
+            letterSpacing: "0.02em",
+            animation: "fadeUp 1s 0.7s ease both",
+          }}
+        >
+          Decentralizirano glasanje na Solana blockchainu — svaki glas je
+          trajan, provjerljiv i zaštićen kriptografijom.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-          <Link
-            href="/create"
-            id="hero-create-poll"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 font-semibold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-300"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Kreiraj Anketu
+        <div
+          className="flex items-center justify-center gap-4 flex-wrap"
+          style={{ animation: "fadeUp 1s 0.9s ease both" }}
+        >
+          <Link href="/create" id="hero-create-poll">
+            <button className="btn-primary text-base px-8 py-3.5">
+              Kreiraj Anketu
+            </button>
           </Link>
-          {!wallet.connected && (
-            <p className="text-xs text-slate-500 self-center">
-              Spoji Phantom wallet za glasanje →
-            </p>
-          )}
+          <Link href="#polls" id="hero-view-polls">
+            <button className="btn-ghost text-base px-8 py-3.5">
+              <span>▶</span> Pregledaj Ankete
+            </button>
+          </Link>
         </div>
-      </div>
 
-      {/* ─── Stats Bar ──────────────────────────────────────── */}
-      {!loading && polls.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Hero Stats */}
+        <div
+          className="flex items-center justify-center gap-12 sm:gap-16 mt-20 pt-14 flex-wrap"
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+            animation: "fadeUp 1s 1.1s ease both",
+          }}
+        >
           {[
-            {
-              label: "Ukupno Anketa",
-              value: polls.length,
-              icon: "📊",
-            },
-            {
-              label: "Aktivne",
-              value: polls.filter((p) => p.account.isActive).length,
-              icon: "🟢",
-            },
-            {
-              label: "Ukupno Glasova",
-              value: polls.reduce(
-                (acc, p) => acc + p.account.totalVotes.toNumber(),
-                0
-              ),
-              icon: "🗳️",
-            },
-            {
-              label: "Zadnje osvježavanje",
-              value: lastRefresh.toLocaleTimeString("hr-HR"),
-              icon: "🔄",
-            },
+            { num: "100%", label: "Nepromjenjivo" },
+            { num: "<1s", label: "Solana Finality" },
+            { num: `${polls.length}`, label: "Aktivnih Anketa" },
+            { num: `${totalVotes}`, label: "Ukupno Glasova" },
           ].map((stat, i) => (
-            <div
-              key={i}
-              className="glass p-4 text-center animate-count"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
-              <div className="text-xl mb-1">{stat.icon}</div>
-              <div className="text-xl sm:text-2xl font-bold text-white">
-                {stat.value}
+            <div key={i} className="text-center">
+              <div
+                className="font-display font-extrabold text-gradient-white"
+                style={{
+                  fontSize: "36px",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {stat.num}
               </div>
-              <div className="text-[11px] text-slate-500 font-medium uppercase tracking-wider mt-1">
+              <div
+                className="mt-1"
+                style={{
+                  fontSize: "13px",
+                  color: "rgba(255,255,255,0.4)",
+                  letterSpacing: "0.04em",
+                }}
+              >
                 {stat.label}
               </div>
             </div>
           ))}
         </div>
-      )}
+      </section>
 
-      {/* ─── Polls List ─────────────────────────────────────── */}
-      <div className="glass p-6 sm:p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-white/90">
-            Ankete
+      {/* ─── Features Grid ──────────────────────────────────── */}
+      <section className="py-16">
+        <div className="text-center mb-16">
+          <div className="section-tag mb-6">✦ Značajke</div>
+          <h2
+            className="font-display font-extrabold"
+            style={{
+              fontSize: "clamp(32px, 4vw, 48px)",
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Izgrađeno za <span className="text-gradient">povjerenje</span>
           </h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger">
+          {[
+            {
+              icon: "🔐",
+              color: "rgba(99, 102, 241, 0.15)",
+              title: "Wallet Identitet",
+              desc: "Svaki glasač se autentificira putem Phantom walleta. Nema računa, nema lozinki — samo kriptografski potvrđen identitet.",
+            },
+            {
+              icon: "🚫",
+              color: "rgba(244, 63, 94, 0.15)",
+              title: "Nema Duplog Glasanja",
+              desc: "PDA računi na Solani osiguravaju jedan glas po walletu. Blockchain — ne mi — sprječava duplicirane glasove.",
+            },
+            {
+              icon: "📡",
+              color: "rgba(139, 92, 246, 0.15)",
+              title: "On-Chain Pohrana",
+              desc: "Ankete, opcije, glasovi i wallet adrese pohranjeni su na Solana Devnetu — bez privatnog servera.",
+            },
+            {
+              icon: "⚡",
+              color: "rgba(245, 158, 11, 0.15)",
+              title: "Sub-sekundna Finalnost",
+              desc: "Solana obrađuje tisuće transakcija u sekundi. Vaš glas je potvrđen i nepromjenjiv za manje od sekunde.",
+            },
+            {
+              icon: "🔍",
+              color: "rgba(6, 182, 212, 0.15)",
+              title: "Javna Provjerljivost",
+              desc: "Svatko može neovisno verificirati svaki glas na Solana Exploreru. Potpuna transparentnost.",
+            },
+            {
+              icon: "🛡️",
+              color: "rgba(34, 197, 94, 0.15)",
+              title: "Admin-Proof",
+              desc: "Smart contract provodi pravila. Jednom dani glas ni kreator ankete ne može promijeniti ili ukloniti.",
+            },
+          ].map((feat, i) => (
+            <div key={i} className="card p-8">
+              <div
+                className="w-[52px] h-[52px] rounded-[14px] flex items-center justify-center mb-6 text-2xl"
+                style={{ background: feat.color }}
+              >
+                {feat.icon}
+              </div>
+              <h3
+                className="font-display font-bold mb-3"
+                style={{ fontSize: "18px", letterSpacing: "-0.01em" }}
+              >
+                {feat.title}
+              </h3>
+              <p
+                className="leading-relaxed"
+                style={{ fontSize: "15px", color: "rgba(255,255,255,0.4)" }}
+              >
+                {feat.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── Active Polls ───────────────────────────────────── */}
+      <section className="py-16" id="polls">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <div className="section-tag mb-4">✦ Ankete</div>
+            <h2
+              className="font-display font-extrabold"
+              style={{
+                fontSize: "clamp(28px, 3vw, 40px)",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Aktivne <span className="text-gradient">ankete</span>
+            </h2>
+          </div>
           <button
             onClick={fetchPolls}
             id="refresh-polls"
-            className="text-xs font-medium px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] transition-all duration-300 text-slate-400 hover:text-white flex items-center gap-1.5"
+            className="btn-ghost text-sm"
           >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             Osvježi
           </button>
         </div>
 
         {loading ? (
-          <div className="text-center py-16 space-y-4">
-            <div className="inline-block w-10 h-10 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-            <p className="text-sm text-slate-500">
+          <div className="text-center py-20">
+            <div
+              className="inline-block w-10 h-10 rounded-full animate-spin"
+              style={{
+                border: "2px solid rgba(99,102,241,0.2)",
+                borderTopColor: "var(--indigo)",
+              }}
+            />
+            <p className="mt-4" style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>
               Učitavanje anketa s Devnet mreže...
             </p>
           </div>
         ) : polls.length === 0 ? (
-          <div className="text-center py-16 space-y-4">
-            <div className="text-5xl mb-4">🗳️</div>
-            <p className="text-slate-400 text-lg font-medium">
+          <div className="glass p-16 text-center">
+            <div className="text-5xl mb-6">🗳️</div>
+            <p
+              className="font-display font-bold text-xl mb-3"
+              style={{ color: "rgba(255,255,255,0.8)" }}
+            >
               Nema pronađenih anketa
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="mb-8" style={{ fontSize: "15px", color: "rgba(255,255,255,0.4)" }}>
               Budi prvi koji će kreirati anketu na blockchainu!
             </p>
-            <Link
-              href="/create"
-              id="empty-create-poll"
-              className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl font-semibold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-300"
-            >
-              Kreiraj Prvu Anketu
+            <Link href="/create" id="empty-create-poll">
+              <button className="btn-primary px-8 py-3.5">
+                Kreiraj Prvu Anketu
+              </button>
             </Link>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 stagger-children">
-            {polls.map((poll) => {
-              const totalVotes = poll.account.totalVotes.toNumber();
-              const isActive = poll.account.isActive;
-              const createdDate = new Date(
-                poll.account.timestamp.toNumber() * 1000
-              );
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 stagger">
+              {polls.map((poll) => {
+                const votes = poll.account.totalVotes.toNumber();
+                const isActive = poll.account.isActive;
+                const createdDate = new Date(
+                  poll.account.timestamp.toNumber() * 1000
+                );
 
-              return (
-                <Link
-                  href={`/poll/${poll.publicKey.toString()}`}
-                  key={poll.publicKey.toString()}
-                  id={`poll-card-${poll.publicKey.toString().slice(0, 8)}`}
-                >
-                  <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300 cursor-pointer group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-white/90 group-hover:text-indigo-300 transition-colors duration-300 leading-tight">
-                        {poll.account.title}
-                      </h3>
-                      <span
-                        className={`shrink-0 ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          isActive
-                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
-                            : "bg-red-500/15 text-red-400 border border-red-500/20"
-                        }`}
-                      >
-                        {isActive ? "Aktivna" : "Zatvorena"}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-4 text-xs text-slate-500">
-                        <span className="flex items-center gap-1">
-                          <svg
-                            className="w-3.5 h-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
-                          {poll.account.options.length} opcija
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <svg
-                            className="w-3.5 h-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                          </svg>
-                          {totalVotes} glasova
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                return (
+                  <Link
+                    href={`/poll/${poll.publicKey.toString()}`}
+                    key={poll.publicKey.toString()}
+                    id={`poll-card-${poll.publicKey.toString().slice(0, 8)}`}
+                  >
+                    <div className="card p-7 cursor-pointer group">
+                      <div className="flex items-start justify-between gap-3 mb-4">
+                        <h3
+                          className="font-display font-bold group-hover:text-white transition-colors"
+                          style={{
+                            fontSize: "18px",
+                            color: "rgba(255,255,255,0.9)",
+                            letterSpacing: "-0.01em",
+                          }}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        {createdDate.toLocaleDateString("hr-HR")}
+                          {poll.account.title}
+                        </h3>
+                        <span
+                          className="shrink-0 text-[11px] font-display font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                          style={{
+                            background: isActive
+                              ? "rgba(34, 197, 94, 0.15)"
+                              : "rgba(244, 63, 94, 0.15)",
+                            color: isActive
+                              ? "var(--green)"
+                              : "var(--rose)",
+                            border: `1px solid ${
+                              isActive
+                                ? "rgba(34, 197, 94, 0.2)"
+                                : "rgba(244, 63, 94, 0.2)"
+                            }`,
+                          }}
+                        >
+                          {isActive ? "Aktivna" : "Zatvorena"}
+                        </span>
                       </div>
 
-                      <p className="text-[10px] text-slate-600 font-mono truncate">
-                        Autor:{" "}
-                        {poll.account.author.toString().slice(0, 4)}...
-                        {poll.account.author.toString().slice(-4)}
-                      </p>
+                      <div
+                        className="flex items-center gap-5 mb-3"
+                        style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}
+                      >
+                        <span>{poll.account.options.length} opcija</span>
+                        <span>
+                          {votes} {votes === 1 ? "glas" : "glasova"}
+                        </span>
+                        <span>
+                          {createdDate.toLocaleDateString("hr-HR")}
+                        </span>
+                      </div>
+
+                      <div
+                        className="font-mono truncate"
+                        style={{
+                          fontSize: "11px",
+                          color: "rgba(255,255,255,0.25)",
+                        }}
+                      >
+                        Autor: {poll.account.author.toString()}
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div
+              className="text-center mt-6"
+              style={{ fontSize: "12px", color: "rgba(255,255,255,0.25)" }}
+            >
+              Zadnje osvježavanje: {lastRefresh.toLocaleTimeString("hr-HR")} · Auto-refresh svakih 15s
+            </div>
+          </>
         )}
-      </div>
+      </section>
     </div>
   );
 }

@@ -2,96 +2,282 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Custom Fonts ──────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* ─── Premium Fonts ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
-/* ─── CSS Variables ─────────────────────────────────────────────── */
+/* ─── CSS Variables ─────────────────────────────────────────── */
 :root {
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-  --gradient-bg: linear-gradient(135deg, #0c0f1a 0%, #1a1040 30%, #0f172a 60%, #0c1220 100%);
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-hover: rgba(255, 255, 255, 0.08);
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --bg: #030303;
+  --bg2: #0a0a0f;
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface2: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  --border2: rgba(255, 255, 255, 0.15);
+  --indigo: #6366f1;
+  --indigo-light: #a5b4fc;
+  --rose: #f43f5e;
+  --rose-light: #fda4af;
+  --violet: #8b5cf6;
+  --amber: #f59e0b;
+  --cyan: #06b6d4;
+  --green: #22c55e;
+  --white: #ffffff;
+  --white80: rgba(255, 255, 255, 0.8);
+  --white60: rgba(255, 255, 255, 0.6);
+  --white40: rgba(255, 255, 255, 0.4);
+  --white20: rgba(255, 255, 255, 0.2);
+  --white10: rgba(255, 255, 255, 0.1);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
 }
 
-/* ─── Base ──────────────────────────────────────────────────────── */
+/* ─── Reset & Base ──────────────────────────────────────────── */
 * {
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--gradient-bg);
-  color: var(--text-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
+html {
+  scroll-behavior: smooth;
 }
 
-/* Animated background orbs */
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Animated Background Shapes ────────────────────────────── */
 body::before,
 body::after {
   content: '';
   position: fixed;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
-  z-index: -1;
-  animation: float 20s ease-in-out infinite;
+  border-radius: 100px;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  z-index: 0;
+  pointer-events: none;
 }
 
 body::before {
-  width: 600px;
-  height: 600px;
-  background: #667eea;
-  top: -200px;
-  right: -200px;
+  width: 500px;
+  height: 120px;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.08), transparent);
+  top: 15%;
+  left: -5%;
+  transform: rotate(12deg);
+  animation: shapeFloat1 14s ease-in-out infinite;
 }
 
 body::after {
-  width: 500px;
-  height: 500px;
-  background: #f093fb;
-  bottom: -200px;
-  left: -200px;
-  animation-delay: -10s;
+  width: 400px;
+  height: 100px;
+  background: linear-gradient(90deg, rgba(244, 63, 94, 0.08), transparent);
+  bottom: 20%;
+  right: -3%;
+  transform: rotate(-15deg);
+  animation: shapeFloat2 16s ease-in-out infinite;
 }
 
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -30px) scale(1.05); }
-  66% { transform: translate(-20px, 20px) scale(0.95); }
+@keyframes shapeFloat1 {
+  0%, 100% { transform: rotate(12deg) translateY(0); }
+  50% { transform: rotate(12deg) translateY(20px); }
 }
 
-/* ─── Glass Utility ─────────────────────────────────────────────── */
+@keyframes shapeFloat2 {
+  0%, 100% { transform: rotate(-15deg) translateY(0); }
+  50% { transform: rotate(-15deg) translateY(-20px); }
+}
+
+/* ─── Glass Utility ─────────────────────────────────────────── */
 @layer utilities {
   .glass {
-    @apply backdrop-blur-xl rounded-2xl shadow-2xl;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
   }
-  .glass-hover:hover {
-    background: var(--glass-hover);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  .glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .glass:hover::before {
+    opacity: 1;
   }
 }
 
-/* ─── Animations ────────────────────────────────────────────────── */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ─── Typography ────────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--indigo-light), var(--rose-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-white {
+  background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Buttons ───────────────────────────────────────────────── */
+.btn-primary {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  background: linear-gradient(135deg, var(--indigo), var(--rose));
+  border: none;
+  padding: 12px 28px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.35);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-ghost {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--white60);
+  background: transparent;
+  border: 1px solid var(--border2);
+  padding: 10px 20px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-ghost:hover {
+  background: var(--surface2);
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ─── Section Tags ──────────────────────────────────────────── */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 100px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--indigo-light);
+  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ─── Cards ─────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover {
+  border-color: var(--border2);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-4px);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* ─── Poll Option Bars ──────────────────────────────────────── */
+.option-bar-indigo {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.25), rgba(99, 102, 241, 0.05));
+}
+.option-bar-rose {
+  background: linear-gradient(90deg, rgba(244, 63, 94, 0.25), rgba(244, 63, 94, 0.05));
+}
+.option-bar-violet {
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.25), rgba(139, 92, 246, 0.05));
+}
+.option-bar-amber {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.25), rgba(245, 158, 11, 0.05));
+}
+.option-bar-cyan {
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.25), rgba(6, 182, 212, 0.05));
+}
+.option-bar-green {
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.05));
+}
+
+/* ─── Wallet Chips ──────────────────────────────────────────── */
+.wallet-chip {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--white40);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* ─── Animations ────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
@@ -99,24 +285,9 @@ body::after {
   to { opacity: 1; }
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(102, 126, 234, 0.5);
-  }
+@keyframes pulseGreen {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
 }
 
 @keyframes shimmer {
@@ -124,85 +295,88 @@ body::after {
   100% { background-position: 200% 0; }
 }
 
-@keyframes countUp {
-  from { opacity: 0; transform: scale(0.5); }
-  to { opacity: 1; transform: scale(1); }
+.animate-fade-up {
+  animation: fadeUp 0.7s ease both;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.5s ease both;
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
+.animate-pulse-green {
+  animation: pulseGreen 1.5s ease-in-out infinite;
 }
 
-.animate-slide-in {
-  animation: slideInRight 0.4s ease-out;
+/* Stagger children */
+.stagger > * {
+  animation: fadeUp 0.5s ease both;
 }
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger > *:nth-child(8) { animation-delay: 0.4s; }
+.stagger > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger > *:nth-child(10) { animation-delay: 0.5s; }
 
-.animate-count {
-  animation: countUp 0.5s ease-out;
-}
-
-/* Stagger children animations */
-.stagger-children > * {
-  animation: fadeInUp 0.5s ease-out both;
-}
-.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
-.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
-.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
-.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
-.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
-.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
-.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
-.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
-.stagger-children > *:nth-child(9) { animation-delay: 0.45s; }
-.stagger-children > *:nth-child(10) { animation-delay: 0.5s; }
-
-/* ─── Scrollbar ─────────────────────────────────────────────────── */
+/* ─── Scrollbar ─────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
-/* ─── Wallet Button Override ────────────────────────────────────── */
+/* ─── Wallet Adapter Override ───────────────────────────────── */
 .wallet-adapter-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  border-radius: 12px !important;
-  font-family: 'Inter', sans-serif !important;
+  font-family: var(--font-display) !important;
   font-weight: 600 !important;
-  font-size: 0.85rem !important;
-  padding: 10px 20px !important;
-  transition: all 0.3s ease !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  font-size: 14px !important;
+  background: linear-gradient(135deg, var(--indigo), var(--rose)) !important;
+  border: none !important;
+  padding: 9px 22px !important;
+  border-radius: 100px !important;
+  transition: all 0.25s !important;
+  letter-spacing: 0.01em !important;
 }
 
 .wallet-adapter-button:hover {
-  opacity: 0.9 !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3) !important;
 }
 
 .wallet-adapter-modal-wrapper {
-  background: rgba(15, 23, 42, 0.95) !important;
+  background: rgba(3, 3, 3, 0.95) !important;
   backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 20px !important;
-  font-family: 'Inter', sans-serif !important;
+  font-family: var(--font-body) !important;
 }
 
-/* ─── Selection ─────────────────────────────────────────────────── */
+/* ─── Selection ─────────────────────────────────────────────── */
 ::selection {
-  background: rgba(102, 126, 234, 0.4);
+  background: rgba(99, 102, 241, 0.4);
   color: white;
+}
+
+/* ─── Input Styling ─────────────────────────────────────────── */
+input[type="text"],
+input[type="date"],
+input[type="time"] {
+  font-family: var(--font-body);
+  color: var(--white);
+}
+
+input[type="text"]::placeholder {
+  color: var(--white20);
 }

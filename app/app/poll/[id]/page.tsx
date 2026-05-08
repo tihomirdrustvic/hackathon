@@ -11,6 +11,19 @@ const PROGRAM_ID = new PublicKey(
   "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
 );
 
+const BAR_COLORS = [
+  "option-bar-indigo",
+  "option-bar-rose",
+  "option-bar-violet",
+  "option-bar-amber",
+  "option-bar-cyan",
+  "option-bar-green",
+  "option-bar-indigo",
+  "option-bar-rose",
+  "option-bar-violet",
+  "option-bar-amber",
+];
+
 interface VoterInfo {
   voter: string;
   optionIndex: number;
@@ -27,7 +40,6 @@ export default function PollDetails({ params }: { params: { id: string } }) {
   const [success, setSuccess] = useState("");
   const [voters, setVoters] = useState<VoterInfo[]>([]);
   const [showVoters, setShowVoters] = useState(false);
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
   const pollKey = new PublicKey(params.id);
 
@@ -38,15 +50,14 @@ export default function PollDetails({ params }: { params: { id: string } }) {
       });
       const program = new anchor.Program(idl as any, PROGRAM_ID, provider);
 
-      // Fetch poll
       const fetchedPoll = await program.account.poll.fetch(pollKey);
       setPoll(fetchedPoll);
 
-      // Fetch all vote records for this poll to get voter wallet addresses
+      // Fetch all vote records to get voter wallet addresses
       const allVoteRecords = await program.account.voteRecord.all([
         {
           memcmp: {
-            offset: 8 + 32, // after discriminator + voter pubkey
+            offset: 8 + 32,
             bytes: pollKey.toBase58(),
           },
         },
@@ -59,7 +70,6 @@ export default function PollDetails({ params }: { params: { id: string } }) {
       }));
 
       setVoters(voterList);
-      setLastRefresh(new Date());
     } catch (err) {
       console.error("Error fetching poll:", err);
       setError("Anketa nije pronađena.");
@@ -72,11 +82,9 @@ export default function PollDetails({ params }: { params: { id: string } }) {
     fetchPollData();
   }, [fetchPollData]);
 
-  // ─── Live auto-refresh every 10 seconds (bonus) ─────────
+  // Live auto-refresh every 10 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchPollData();
-    }, 10000);
+    const interval = setInterval(fetchPollData, 10000);
     return () => clearInterval(interval);
   }, [fetchPollData]);
 
@@ -85,7 +93,6 @@ export default function PollDetails({ params }: { params: { id: string } }) {
       setError("Molimo spojite Phantom wallet za glasanje.");
       return;
     }
-
     setVotingIndex(index);
     setError("");
     setSuccess("");
@@ -97,11 +104,7 @@ export default function PollDetails({ params }: { params: { id: string } }) {
       const program = new anchor.Program(idl as any, PROGRAM_ID, provider);
 
       const [voteRecordPda] = PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("vote"),
-          pollKey.toBuffer(),
-          wallet.publicKey.toBuffer(),
-        ],
+        [Buffer.from("vote"), pollKey.toBuffer(), wallet.publicKey.toBuffer()],
         program.programId
       );
 
@@ -115,19 +118,14 @@ export default function PollDetails({ params }: { params: { id: string } }) {
         })
         .rpc();
 
-      setSuccess("✅ Glas uspješno zapisan na Solana blockchain!");
+      setSuccess("Glas uspješno zapisan na Solana blockchain!");
       await fetchPollData();
     } catch (err: any) {
       console.error(err);
-      if (
-        err.message?.includes("already in use") ||
-        err.message?.includes("0x0")
-      ) {
-        setError(
-          "⚠️ Već ste glasali na ovoj anketi! Duplo glasanje je spriječeno putem smart contracta."
-        );
+      if (err.message?.includes("already in use") || err.message?.includes("0x0")) {
+        setError("Već ste glasali na ovoj anketi! Duplo glasanje spriječeno putem smart contracta.");
       } else if (err.message?.includes("PollClosed") || err.message?.includes("6004")) {
-        setError("Ova anketa je zatvorena. Glasanje više nije moguće.");
+        setError("Ova anketa je zatvorena.");
       } else if (err.message?.includes("PollExpired") || err.message?.includes("6005")) {
         setError("Rok za glasanje je istekao.");
       } else if (err.message?.includes("NotWhitelisted") || err.message?.includes("6007")) {
@@ -142,7 +140,6 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
   const handleClosePoll = async () => {
     if (!wallet.connected || !wallet.publicKey) return;
-
     try {
       const provider = new anchor.AnchorProvider(connection, wallet as any, {
         preflightCommitment: "processed",
@@ -151,26 +148,24 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
       await program.methods
         .closePoll(new anchor.BN(poll.pollId.toNumber()))
-        .accounts({
-          poll: pollKey,
-          author: wallet.publicKey,
-        })
+        .accounts({ poll: pollKey, author: wallet.publicKey })
         .rpc();
 
       setSuccess("Anketa je zatvorena.");
       await fetchPollData();
     } catch (err: any) {
-      console.error(err);
       setError("Samo autor ankete može zatvoriti glasanje.");
     }
   };
 
-  // ─── Loading State ───────────────────────────────────────
   if (loading) {
     return (
-      <div className="text-center mt-20 space-y-4 animate-fade-in">
-        <div className="inline-block w-12 h-12 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-        <p className="text-sm text-slate-500">
+      <div className="text-center py-32 animate-fade-in">
+        <div
+          className="inline-block w-12 h-12 rounded-full animate-spin"
+          style={{ border: "2px solid rgba(99,102,241,0.2)", borderTopColor: "var(--indigo)" }}
+        />
+        <p className="mt-4" style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>
           Učitavanje podataka s blockchaina...
         </p>
       </div>
@@ -179,324 +174,280 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
   if (!poll) {
     return (
-      <div className="text-center mt-20 space-y-4 animate-fade-in">
-        <div className="text-5xl">❌</div>
-        <p className="text-red-400 text-lg font-medium">{error}</p>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
-        >
-          ← Natrag na početnu
-        </Link>
+      <div className="text-center py-32 animate-fade-in">
+        <div className="text-5xl mb-4">❌</div>
+        <p className="font-display font-bold text-xl mb-4" style={{ color: "var(--rose)" }}>
+          {error}
+        </p>
+        <Link href="/" className="btn-ghost">← Natrag na početnu</Link>
       </div>
     );
   }
 
   const totalVotes = poll.totalVotes.toNumber();
-  const isAuthor =
-    wallet.publicKey?.toString() === poll.author.toString();
+  const isAuthor = wallet.publicKey?.toString() === poll.author.toString();
   const createdDate = new Date(poll.timestamp.toNumber() * 1000);
   const hasDeadline = poll.deadline !== null && poll.deadline !== undefined;
-  const deadlineDate = hasDeadline
-    ? new Date(poll.deadline.toNumber() * 1000)
-    : null;
-  const isExpired =
-    hasDeadline && deadlineDate && deadlineDate.getTime() < Date.now();
+  const deadlineDate = hasDeadline ? new Date(poll.deadline.toNumber() * 1000) : null;
+  const isExpired = hasDeadline && deadlineDate && deadlineDate.getTime() < Date.now();
+  const canVote = poll.isActive && !isExpired;
 
   return (
-    <div className="max-w-3xl mx-auto animate-fade-in-up">
-      {/* ─── Back Link ──────────────────────────────────────── */}
+    <div className="max-w-3xl mx-auto animate-fade-up">
+      {/* Back */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-300 transition-colors mb-6"
         id="back-to-home"
+        className="inline-flex items-center gap-2 mb-8 font-display text-sm font-medium transition-colors duration-200"
+        style={{ color: "rgba(255,255,255,0.4)" }}
       >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-          />
-        </svg>
-        Sve Ankete
+        ← Sve Ankete
       </Link>
 
-      {/* ─── Poll Header ───────────────────────────────────── */}
-      <div className="glass p-6 sm:p-8 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-          <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl font-black text-white/95 leading-tight mb-3">
-              {poll.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-              <span
-                className={`px-2.5 py-1 rounded-full font-bold uppercase tracking-wider text-[10px] ${
-                  poll.isActive && !isExpired
-                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
-                    : "bg-red-500/15 text-red-400 border border-red-500/20"
-                }`}
-              >
-                {poll.isActive && !isExpired ? "🟢 Aktivna" : "🔴 Zatvorena"}
-              </span>
-              <span>
-                Kreirano: {createdDate.toLocaleDateString("hr-HR")}{" "}
-                {createdDate.toLocaleTimeString("hr-HR")}
-              </span>
-              {hasDeadline && deadlineDate && (
-                <span className={isExpired ? "text-red-400" : "text-amber-400"}>
-                  ⏰ Rok:{" "}
-                  {deadlineDate.toLocaleDateString("hr-HR")}{" "}
-                  {deadlineDate.toLocaleTimeString("hr-HR")}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Close poll button (author only) */}
-          {isAuthor && poll.isActive && !isExpired && (
-            <button
-              onClick={handleClosePoll}
-              id="close-poll"
-              className="shrink-0 px-4 py-2 text-xs font-semibold rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all duration-300"
-            >
-              Zatvori Glasanje
-            </button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-slate-600 font-mono">
-          <svg
-            className="w-3.5 h-3.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-          Autor: {poll.author.toString()}
-        </div>
-      </div>
-
-      {/* ─── Alerts ─────────────────────────────────────────── */}
-      {error && (
-        <div
-          className="flex items-start gap-3 p-4 mb-6 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-sm animate-fade-in"
-          id="vote-error"
-        >
-          <svg
-            className="w-5 h-5 shrink-0 mt-0.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {error}
-        </div>
-      )}
-      {success && (
-        <div
-          className="flex items-start gap-3 p-4 mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm animate-fade-in"
-          id="vote-success"
-        >
-          <svg
-            className="w-5 h-5 shrink-0 mt-0.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {success}
-        </div>
-      )}
-
-      {/* ─── Voting Options ─────────────────────────────────── */}
-      <div className="glass p-6 sm:p-8 mb-6">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold text-white/90">Opcije za glasanje</h2>
+      {/* ─── Poll Card (matching mock-card style) ──────────── */}
+      <div className="glass p-8 sm:p-10 mb-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <button
-              onClick={fetchPollData}
-              id="refresh-results"
-              className="text-xs font-medium px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] transition-all duration-300 text-slate-400 hover:text-white flex items-center gap-1.5"
-            >
-              <svg
-                className="w-3.5 h-3.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Osvježi
-            </button>
+            <span className="font-display font-bold text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
+              Glasanje u tijeku
+            </span>
+          </div>
+          <div
+            className="flex items-center gap-1.5 text-xs font-medium"
+            style={{ color: canVote ? "var(--green)" : "var(--rose)" }}
+          >
+            <span
+              className="w-[7px] h-[7px] rounded-full"
+              style={{
+                background: canVote ? "var(--green)" : "var(--rose)",
+                animation: canVote ? "pulseGreen 1.5s ease-in-out infinite" : "none",
+              }}
+            />
+            {canVote ? "LIVE na Devnet" : "Zatvoreno"}
           </div>
         </div>
 
-        <div className="space-y-3 stagger-children">
+        {/* Question */}
+        <h1
+          className="font-display font-bold mb-6"
+          style={{ fontSize: "22px", lineHeight: 1.4 }}
+        >
+          {poll.title}
+        </h1>
+
+        {/* Alerts */}
+        {error && (
+          <div
+            className="flex items-start gap-3 p-4 mb-6 rounded-2xl animate-fade-in text-sm"
+            style={{
+              background: "rgba(244, 63, 94, 0.08)",
+              border: "1px solid rgba(244, 63, 94, 0.2)",
+              color: "var(--rose-light)",
+            }}
+            id="vote-error"
+          >
+            ⚠ {error}
+          </div>
+        )}
+        {success && (
+          <div
+            className="flex items-start gap-3 p-4 mb-6 rounded-2xl animate-fade-in text-sm"
+            style={{
+              background: "rgba(34, 197, 94, 0.08)",
+              border: "1px solid rgba(34, 197, 94, 0.2)",
+              color: "#86efac",
+            }}
+            id="vote-success"
+          >
+            ✓ {success}
+          </div>
+        )}
+
+        {/* ─── Options (mock-option style) ──────────────────── */}
+        <div className="space-y-3 stagger">
           {poll.options.map((option: string, index: number) => {
             const votes = poll.votes[index].toNumber();
-            const percentage =
-              totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
-            const canVote = poll.isActive && !isExpired;
-
-            // Color gradient based on ranking
-            const colors = [
-              "from-indigo-500/40 to-purple-500/40",
-              "from-purple-500/40 to-pink-500/40",
-              "from-pink-500/40 to-rose-500/40",
-              "from-blue-500/40 to-indigo-500/40",
-              "from-teal-500/40 to-emerald-500/40",
-              "from-amber-500/40 to-orange-500/40",
-              "from-cyan-500/40 to-blue-500/40",
-              "from-fuchsia-500/40 to-pink-500/40",
-              "from-lime-500/40 to-green-500/40",
-              "from-violet-500/40 to-purple-500/40",
-            ];
+            const percentage = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
 
             return (
               <div
                 key={index}
                 id={`vote-option-${index}`}
-                className="relative bg-white/[0.02] border border-white/[0.06] rounded-xl overflow-hidden group hover:border-white/[0.12] transition-all duration-300"
+                className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
+                style={{
+                  border: `1px solid ${votingIndex === index ? "rgba(99,102,241,0.5)" : "rgba(255,255,255,0.08)"}`,
+                }}
+                onClick={() => canVote && votingIndex === null && handleVote(index)}
               >
                 {/* Progress bar */}
                 <div
-                  className={`absolute left-0 top-0 bottom-0 bg-gradient-to-r ${colors[index % colors.length]} transition-all duration-1000 ease-out`}
-                  style={{ width: `${percentage}%` }}
+                  className={`absolute left-0 top-0 bottom-0 ${BAR_COLORS[index % BAR_COLORS.length]} rounded-xl`}
+                  style={{
+                    width: `${percentage}%`,
+                    transition: "width 1.5s cubic-bezier(0.23, 0.86, 0.39, 0.96)",
+                  }}
                 />
 
-                <div className="relative z-10 p-4 flex items-center justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3">
-                      <span className="text-base font-semibold text-white/90 truncate">
-                        {option}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-slate-400 font-mono">
-                        {votes} {votes === 1 ? "glas" : "glasova"}
-                      </span>
-                      <span className="text-xs font-bold text-white/70">
-                        {percentage}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {canVote && (
-                    <button
-                      onClick={() => handleVote(index)}
-                      disabled={votingIndex !== null}
-                      id={`vote-btn-${index}`}
-                      className="shrink-0 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg text-sm font-semibold shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-40 disabled:hover:translate-y-0"
+                {/* Content */}
+                <div className="relative z-10 flex items-center justify-between px-4 py-4">
+                  <span className="font-medium" style={{ fontSize: "15px" }}>
+                    {option}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className="font-display font-bold text-sm"
+                      style={{ color: "rgba(255,255,255,0.6)" }}
                     >
-                      {votingIndex === index ? (
-                        <span className="flex items-center gap-1.5">
-                          <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Glasam...
-                        </span>
-                      ) : (
-                        "Glasaj"
-                      )}
-                    </button>
-                  )}
+                      {percentage}%
+                    </span>
+                    {canVote && (
+                      <button
+                        disabled={votingIndex !== null}
+                        id={`vote-btn-${index}`}
+                        className="btn-primary text-xs px-4 py-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVote(index);
+                        }}
+                      >
+                        {votingIndex === index ? (
+                          <span className="flex items-center gap-1.5">
+                            <span
+                              className="w-3 h-3 rounded-full animate-spin"
+                              style={{ border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white" }}
+                            />
+                          </span>
+                        ) : (
+                          "Glasaj"
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* ─── Total Votes ────────────────────────────────── */}
-        <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between">
-          <div className="text-sm text-slate-400">
-            Ukupno glasova:{" "}
-            <span className="text-white font-bold text-lg animate-count">
-              {totalVotes}
-            </span>
+        {/* Footer (matching mock-footer) */}
+        <div
+          className="flex items-center justify-between mt-6 pt-5 flex-wrap gap-3"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>
+            📊 {totalVotes} {totalVotes === 1 ? "glas" : "glasova"} ukupno
           </div>
-          <div className="text-[11px] text-slate-600">
-            Zadnje osvježavanje: {lastRefresh.toLocaleTimeString("hr-HR")}
+          <div className="flex items-center gap-2" style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+            <span style={{ fontSize: "16px" }}>◎</span>
+            Solana Devnet
           </div>
         </div>
+
+        {/* Wallet Chips (matching claude-frontend) */}
+        {voters.length > 0 && (
+          <div className="flex gap-2 flex-wrap mt-4">
+            {voters.slice(0, 3).map((v, i) => (
+              <div key={i} className="wallet-chip">
+                {v.voter.slice(0, 4)}...{v.voter.slice(-4)}
+              </div>
+            ))}
+            {voters.length > 3 && (
+              <div className="wallet-chip">
+                +{voters.length - 3} više
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* ─── Voter Addresses (REQUIRED by prompt) ──────────── */}
-      <div className="glass p-6 sm:p-8 mb-6">
+      {/* ─── Poll Meta ──────────────────────────────────────── */}
+      <div className="glass p-7 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div>
+            <div className="text-[11px] uppercase tracking-wider font-display font-semibold mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+              Autor
+            </div>
+            <div className="font-mono text-xs truncate" style={{ color: "var(--indigo-light)" }}>
+              {poll.author.toString()}
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] uppercase tracking-wider font-display font-semibold mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+              Kreirano
+            </div>
+            <div className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
+              {createdDate.toLocaleDateString("hr-HR")} {createdDate.toLocaleTimeString("hr-HR")}
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] uppercase tracking-wider font-display font-semibold mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+              Rok
+            </div>
+            <div className="text-sm" style={{ color: hasDeadline ? (isExpired ? "var(--rose)" : "var(--amber)") : "rgba(255,255,255,0.4)" }}>
+              {hasDeadline && deadlineDate
+                ? `${deadlineDate.toLocaleDateString("hr-HR")} ${deadlineDate.toLocaleTimeString("hr-HR")}`
+                : "Bez ograničenja"}
+            </div>
+          </div>
+          <div>
+            <div className="text-[11px] uppercase tracking-wider font-display font-semibold mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+              Status
+            </div>
+            <div className="text-sm" style={{ color: canVote ? "var(--green)" : "var(--rose)" }}>
+              {canVote ? "Aktivno" : "Zatvoreno"}
+            </div>
+          </div>
+        </div>
+
+        {isAuthor && poll.isActive && !isExpired && (
+          <div className="mt-6 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+            <button onClick={handleClosePoll} id="close-poll" className="btn-ghost text-sm" style={{ borderColor: "rgba(244,63,94,0.3)", color: "var(--rose-light)" }}>
+              Zatvori Glasanje
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ─── Voter Wallet Addresses (REQUIRED) ──────────────── */}
+      <div className="glass p-7 mb-8">
         <button
           onClick={() => setShowVoters(!showVoters)}
           id="toggle-voters"
           className="w-full flex items-center justify-between"
         >
-          <h2 className="text-lg font-bold text-white/90 flex items-center gap-2">
-            <svg
-              className="w-5 h-5 text-indigo-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <h2 className="font-display font-bold text-base flex items-center gap-2">
+            👥 Wallet Adrese Glasača
+            <span
+              className="font-display text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: "var(--surface2)", color: "rgba(255,255,255,0.5)" }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            Wallet Adrese Glasača ({voters.length})
+              {voters.length}
+            </span>
           </h2>
-          <svg
-            className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${
-              showVoters ? "rotate-180" : ""
-            }`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+          <span
+            className="text-lg transition-transform duration-300"
+            style={{
+              color: "rgba(255,255,255,0.4)",
+              transform: showVoters ? "rotate(180deg)" : "rotate(0)",
+            }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
+            ▾
+          </span>
         </button>
 
         {showVoters && (
           <div className="mt-5 space-y-2 animate-fade-in">
             {voters.length === 0 ? (
-              <p className="text-sm text-slate-500 text-center py-4">
+              <p className="text-center py-6" style={{ fontSize: "14px", color: "rgba(255,255,255,0.3)" }}>
                 Još nitko nije glasao na ovoj anketi.
               </p>
             ) : (
               <>
-                {/* Table header */}
-                <div className="grid grid-cols-12 gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-600">
+                <div
+                  className="grid grid-cols-12 gap-2 px-3 py-2 font-display font-bold uppercase tracking-wider"
+                  style={{ fontSize: "10px", color: "rgba(255,255,255,0.25)" }}
+                >
                   <div className="col-span-5">Wallet Adresa</div>
                   <div className="col-span-4">Glasao Za</div>
                   <div className="col-span-3">Vrijeme</div>
@@ -506,26 +457,34 @@ export default function PollDetails({ params }: { params: { id: string } }) {
                   <div
                     key={i}
                     id={`voter-${i}`}
-                    className="grid grid-cols-12 gap-2 px-3 py-3 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-colors text-sm stagger-children"
+                    className="grid grid-cols-12 gap-2 px-3 py-3 rounded-xl transition-colors duration-200"
+                    style={{
+                      background: "rgba(255,255,255,0.02)",
+                      border: "1px solid rgba(255,255,255,0.04)",
+                    }}
                   >
-                    <div className="col-span-5 font-mono text-xs text-indigo-300 truncate">
+                    <div className="col-span-5 font-mono text-xs truncate" style={{ color: "var(--indigo-light)" }}>
                       {voter.voter}
                     </div>
-                    <div className="col-span-4 text-xs text-slate-300">
-                      <span className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.06]">
+                    <div className="col-span-4">
+                      <span
+                        className="text-xs px-2 py-0.5 rounded-md"
+                        style={{
+                          background: "var(--surface)",
+                          border: "1px solid rgba(255,255,255,0.06)",
+                          color: "rgba(255,255,255,0.6)",
+                        }}
+                      >
                         {poll.options[voter.optionIndex] || `Option ${voter.optionIndex}`}
                       </span>
                     </div>
-                    <div className="col-span-3 text-xs text-slate-500">
-                      {new Date(voter.timestamp * 1000).toLocaleString(
-                        "hr-HR",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }
-                      )}
+                    <div className="col-span-3 text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
+                      {new Date(voter.timestamp * 1000).toLocaleString("hr-HR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </div>
                   </div>
                 ))}
@@ -536,27 +495,29 @@ export default function PollDetails({ params }: { params: { id: string } }) {
       </div>
 
       {/* ─── Blockchain Info ────────────────────────────────── */}
-      <div className="glass p-5 text-xs text-slate-600 space-y-1.5">
-        <p className="font-semibold text-slate-500 mb-2 uppercase tracking-wider text-[10px]">
+      <div
+        className="rounded-2xl p-5 space-y-2"
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          fontSize: "12px",
+          color: "rgba(255,255,255,0.3)",
+        }}
+      >
+        <p className="font-display font-bold text-[10px] uppercase tracking-wider mb-3" style={{ color: "rgba(255,255,255,0.2)" }}>
           Blockchain Podaci
         </p>
         <p>
-          <span className="text-slate-500">Poll Account:</span>{" "}
-          <span className="font-mono text-indigo-400/70">{params.id}</span>
+          <span style={{ color: "rgba(255,255,255,0.4)" }}>Poll Account:</span>{" "}
+          <span className="font-mono" style={{ color: "var(--indigo-light)", opacity: 0.6 }}>{params.id}</span>
         </p>
         <p>
-          <span className="text-slate-500">Program ID:</span>{" "}
-          <span className="font-mono text-indigo-400/70">
-            {PROGRAM_ID.toString()}
-          </span>
+          <span style={{ color: "rgba(255,255,255,0.4)" }}>Program ID:</span>{" "}
+          <span className="font-mono" style={{ color: "var(--indigo-light)", opacity: 0.6 }}>{PROGRAM_ID.toString()}</span>
         </p>
         <p>
-          <span className="text-slate-500">Mreža:</span>{" "}
-          <span className="text-emerald-400">Solana Devnet</span>
-        </p>
-        <p>
-          <span className="text-slate-500">Poll ID:</span>{" "}
-          <span className="font-mono">{poll.pollId.toNumber()}</span>
+          <span style={{ color: "rgba(255,255,255,0.4)" }}>Mreža:</span>{" "}
+          <span style={{ color: "var(--green)" }}>Solana Devnet</span>
         </p>
       </div>
     </div>
