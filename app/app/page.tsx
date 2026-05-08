@@ -142,46 +142,53 @@ export default function Home() {
             {[
               {
                 icon: "🔐",
-                color: "indigo",
+                color: "indigo" as const,
                 title: "Identitet Walleta",
                 desc: "Svaki glasač se autentificira putem Phantom walleta. Nema računa, nema lozinki — samo kriptografski potvrđen identitet.",
               },
               {
                 icon: "🚫",
-                color: "rose",
+                color: "rose" as const,
                 title: "Bez Duplog Glasanja",
                 desc: "PDA računi na Solani osiguravaju jedan glas po walletu. Blockchain sprječava duplicirane glasove.",
               },
               {
                 icon: "📡",
-                color: "violet",
+                color: "violet" as const,
                 title: "Pohrana na Lancu",
                 desc: "Ankete, opcije, glasovi i wallet adrese pohranjeni su na Solana Devnetu — bez privatnog servera.",
               },
               {
                 icon: "⚡",
-                color: "amber",
+                color: "amber" as const,
                 title: "Brza Finalizacija",
                 desc: "Solana brzo potvrđuje transakcije, a svaki glas ostaje trajno zapisan na blockchainu.",
               },
               {
                 icon: "🔍",
-                color: "cyan",
+                color: "cyan" as const,
                 title: "Javna Provjera",
                 desc: "Svatko može provjeriti rezultate i wallet adrese glasača direktno iz javnih on-chain podataka.",
               },
               {
                 icon: "🛡️",
-                color: "green",
+                color: "green" as const,
                 title: "Zaštita od Admina",
                 desc: "Smart contract provodi pravila. Jednom dani glas ni kreator ankete ne može promijeniti ili ukloniti.",
               },
             ].map((feat) => (
-              <div key={feat.title} className="feature-card reveal visible">
+              <GlowCard
+                key={feat.title}
+                customSize
+                bare
+                glowColor={feat.color}
+                width="100%"
+                className="feature-card reveal visible"
+              >
                 <div className={`feature-icon ${feat.color}`}>{feat.icon}</div>
                 <div className="feature-title">{feat.title}</div>
                 <p className="feature-desc">{feat.desc}</p>
-              </div>
+              </GlowCard>
             ))}
           </div>
         </div>
@@ -351,20 +358,33 @@ export default function Home() {
 
           <div className="benefits-grid">
             {[
-              ["🔒", "Nula Povjerenja", "Ne morate vjerovati organizatoru ili serveru. Solana smart contract autonomno provodi sva pravila."],
-              ["🌍", "Javno Provjerljivo", "Svaki glas je javno provjerljiv, zajedno s ukupnim rezultatom i wallet adresama glasača."],
-              ["⚡", "Munjevita Brzina", "Solana Devnet omogućuje brzo kreiranje anketa i brzo slanje glasova putem Phantom walleta."],
-              ["💎", "Trajni Zapis", "Blockchain podaci su nepromjenjivi. Jednom zapisan glas ne može se izmijeniti."],
-            ].map(([icon, title, desc]) => (
-              <div key={title} className="benefit-card reveal visible">
+              ["🔒", "Nula Povjerenja", "Ne morate vjerovati organizatoru ili serveru. Solana smart contract autonomno provodi sva pravila.", "blue"],
+              ["🌍", "Javno Provjerljivo", "Svaki glas je javno provjerljiv, zajedno s ukupnim rezultatom i wallet adresama glasača.", "green"],
+              ["⚡", "Munjevita Brzina", "Solana Devnet omogućuje brzo kreiranje anketa i brzo slanje glasova putem Phantom walleta.", "amber"],
+              ["💎", "Trajni Zapis", "Blockchain podaci su nepromjenjivi. Jednom zapisan glas ne može se izmijeniti.", "violet"],
+            ].map(([icon, title, desc, color]) => (
+              <GlowCard
+                key={title}
+                customSize
+                bare
+                glowColor={color as any}
+                width="100%"
+                className="benefit-card reveal visible"
+              >
                 <div className="benefit-icon">{icon}</div>
                 <div className="benefit-text">
                   <h3>{title}</h3>
                   <p>{desc}</p>
                 </div>
-              </div>
+              </GlowCard>
             ))}
-            <div className="benefit-card wide reveal visible">
+            <GlowCard
+              customSize
+              bare
+              glowColor="purple"
+              width="100%"
+              className="benefit-card wide reveal visible"
+            >
               <div className="benefit-icon">🏫</div>
               <div className="benefit-text">
                 <h3>Stvoreno za Škole — Spremno za Svijet</h3>
@@ -372,7 +392,7 @@ export default function Home() {
                   Bilo da razred bira izlet, majice ili predsjednika razreda, LIBROS daje institucionalnu razinu integriteta svakodnevnim odlukama.
                 </p>
               </div>
-            </div>
+            </GlowCard>
           </div>
         </div>
       </section>
@@ -498,8 +518,8 @@ export default function Home() {
                               ? "var(--green)"
                               : "var(--rose)",
                             border: `1px solid ${isActive
-                                ? "rgba(34, 197, 94, 0.2)"
-                                : "rgba(244, 63, 94, 0.2)"
+                              ? "rgba(34, 197, 94, 0.2)"
+                              : "rgba(244, 63, 94, 0.2)"
                               }`,
                           }}
                         >
