@@ -239,7 +239,7 @@ docker run -p 3000:3000 votedapp
 4. Postavi **Root Directory** na `app`
 5. Ostavi defaultne postavke (Next.js) i klikni Deploy
 
-**Deploy link:** _[DODAJ LINK NAKON DEPLOYA]_
+**Deploy link:** https://hackathon-ruby-nine.vercel.app/
 
 ## 🏆 Bonus Funkcionalnosti
 
