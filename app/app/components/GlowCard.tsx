@@ -72,8 +72,9 @@ const GlowCard: React.FC<GlowCardProps> = ({
       '--backup-border': 'var(--backdrop)',
       '--size': '200',
       '--outer': '1',
-      '--border-size': 'calc(var(--border, 2) * 1px)',
-      '--spotlight-size': 'calc(var(--size, 150) * 1px)',
+      // set placeholder values; we'll compute pixel values below to avoid nested `calc()`
+      '--border-size': '2px',
+      '--spotlight-size': '150px',
       '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
       backgroundImage: `radial-gradient(
         var(--spotlight-size) var(--spotlight-size) at
@@ -97,6 +98,12 @@ const GlowCard: React.FC<GlowCardProps> = ({
     if (height !== undefined) {
       baseStyles.height = typeof height === 'number' ? `${height}px` : height;
     }
+
+    // Compute pixel values for sizes to avoid nested `calc()` usage in the injected CSS
+    const borderVal = Number(baseStyles['--border']) || 2;
+    const sizeVal = Number(baseStyles['--size']) || 150;
+    baseStyles['--border-size'] = `${borderVal}px`;
+    baseStyles['--spotlight-size'] = `${sizeVal}px`;
 
     return baseStyles;
   };
