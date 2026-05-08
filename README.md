@@ -18,6 +18,10 @@ VoteDApp rješava problem povjerenja i transparentnosti u izbornim procesima. Tr
 - **Napredne kontrole (Premium značajke)** — Implementirana vremenska ograničenja (deadlines), mogućnost ručnog zatvaranja ankete od strane autora i *Whitelist* pristup.
 - **Real-time UX** — Frontend automatski osvježava stanje s blockchaina (auto-refresh) i sadrži responzivni *Glassmorphism* UI.
 
+## 🎥 Video Demonstracija
+
+[Streamable](https://streamable.com/8w0swy)
+
 ## 🛠️ Tech Stack
 
 | Domena | Tehnologija |
@@ -101,12 +105,6 @@ Naš Anchor program izlaže četiri glavne instrukcije za klijentsku interakciju
 
 * **Poll Account**: Sadrži ID, autora, naslov, vektor opcija, vektor glasova, timestamp kreiranja i boolean status aktivnosti.
 * **Vote Record (PDA)**: Relacijski račun koji trajno spaja `voter_pubkey` i `poll_id`, osiguravajući integritet pravila "jedan korisnik - jedan glas".
-
-## 🎥 Video Demonstracija
-
-<video src="https://github.com/tihomirdrustvic/hackathon/raw/main/2026-05-08%2014-02-11.mp4" controls="controls" style="max-width: 100%;">
-  Vaš preglednik ne podržava video tag.
-</video>
 
 ## 👥 Tim
 
