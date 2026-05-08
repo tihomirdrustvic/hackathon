@@ -5,10 +5,10 @@ import Link from "next/link";
 import WalletButton from "./WalletButton";
 
 export const metadata = {
-  title: "LIBROS — Decentralizirano Glasanje na Solana Blockchainu",
+  title: "VoteDApp — Decentralizirano Glasanje na Solana Blockchainu",
   description:
     "Decentralizirana aplikacija za glasanje na Solana blockchainu. Kreirajte ankete i glasajte sigurno putem Phantom walleta. Svi glasovi su trajno zapisani na Devnetu.",
-  keywords: "solana, blockchain, voting, dapp, decentralized, phantom, anchor, libros",
+  keywords: "solana, blockchain, voting, dapp, decentralized, phantom, anchor, VoteDApp",
 };
 
 export default function RootLayout({
@@ -52,7 +52,7 @@ export default function RootLayout({
                 className="font-display font-extrabold text-[20px] tracking-tight text-gradient shrink-0"
                 style={{ letterSpacing: "-0.5px" }}
               >
-                LIBROS
+                VoteDApp
               </Link>
 
               <style>{`
@@ -90,7 +90,7 @@ export default function RootLayout({
                   <span
                     className="font-display font-extrabold text-lg text-gradient"
                   >
-                    LIBROS
+                    VoteDApp
                   </span>
                   <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.4)" }}>
                     Decentralizirano glasanje na Solana blockchainu

@@ -369,7 +369,7 @@ export default function Home() {
               <div className="benefit-text">
                 <h3>Stvoreno za Škole — Spremno za Svijet</h3>
                 <p>
-                  Bilo da razred bira izlet, majice ili predsjednika razreda, LIBROS daje institucionalnu razinu integriteta svakodnevnim odlukama.
+                  Bilo da razred bira izlet, majice ili predsjednika razreda, VoteDApp daje institucionalnu razinu integriteta svakodnevnim odlukama.
                 </p>
               </div>
             </div>
