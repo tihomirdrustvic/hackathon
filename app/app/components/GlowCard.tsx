@@ -96,7 +96,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
       backgroundAttachment: 'scroll',
       border: 'var(--border-size) solid var(--backup-border)',
       position: 'relative' as const,
-      touchAction: 'none' as const,
+      touchAction: 'pan-y' as const,
     };
 
     // Add width and height if provided
