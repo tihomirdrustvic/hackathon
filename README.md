@@ -44,7 +44,7 @@ hackathon/
 │   │   ├── globals.css           # Globalni stilovi
 │   │   └── idl.json              # Anchor IDL za frontend
 │   ├── package.json
-│   ├── next.config.mjs
+│   ├── next.config.js
 │   ├── tailwind.config.js
 │   └── tsconfig.json
 ├── Dockerfile                    # Docker podrška

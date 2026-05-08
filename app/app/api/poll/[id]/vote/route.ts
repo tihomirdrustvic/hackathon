@@ -10,14 +10,17 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const pollKey = new PublicKey(params.id);
     const voterKey = new PublicKey(walletPubkey);
 
-    const connection = new Connection(RPC_ENDPOINT);
+    const connection = new Connection(RPC_ENDPOINT, "confirmed");
     const wallet = {
       publicKey: voterKey,
       signTransaction: async (tx: any) => tx,
       signAllTransactions: async (txs: any[]) => txs,
     };
 
-    const provider = new anchor.AnchorProvider(connection, wallet, {});
+    const provider = new anchor.AnchorProvider(connection, wallet, {
+      commitment: "confirmed",
+      preflightCommitment: "confirmed",
+    });
     const program = new anchor.Program({ ...idl, address: PROGRAM_ID.toString() } as any as anchor.Idl, provider);
 
     const voteRecordPda = computeVoteRecordPda(pollKey, voterKey, PROGRAM_ID);
@@ -33,11 +36,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       } as any)
       .transaction();
 
-    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    const latestBlockhash = await connection.getLatestBlockhash("confirmed");
+    tx.recentBlockhash = latestBlockhash.blockhash;
     tx.feePayer = voterKey;
 
     const serialized = tx.serialize({ requireAllSignatures: false });
-    return NextResponse.json({ tx: Buffer.from(serialized).toString("base64") });
+    return NextResponse.json({
+      tx: Buffer.from(serialized).toString("base64"),
+      blockhash: latestBlockhash.blockhash,
+      lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+    });
   } catch (error) {
     console.error("Error creating vote transaction:", error);
     return NextResponse.json({ error: String(error) }, { status: 500 });

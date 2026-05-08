@@ -99,7 +99,14 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
       if (!connection) throw new Error("No connection");
       const signature = await connection.sendRawTransaction(signed.serialize());
-      await connection.confirmTransaction(signature);
+      await connection.confirmTransaction(
+        {
+          signature,
+          blockhash: data.blockhash,
+          lastValidBlockHeight: data.lastValidBlockHeight,
+        },
+        "confirmed"
+      );
 
       setSuccess("Glas uspješno zapisan na Solana blockchain!");
       await fetchPollData();
@@ -145,7 +152,14 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
       if (!connection) throw new Error("No connection");
       const signature = await connection.sendRawTransaction(signed.serialize());
-      await connection.confirmTransaction(signature);
+      await connection.confirmTransaction(
+        {
+          signature,
+          blockhash: data.blockhash,
+          lastValidBlockHeight: data.lastValidBlockHeight,
+        },
+        "confirmed"
+      );
 
       setSuccess("Anketa je zatvorena.");
       await fetchPollData();

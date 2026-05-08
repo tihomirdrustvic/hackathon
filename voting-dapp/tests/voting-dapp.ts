@@ -1,14 +1,18 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { VotingDapp } from "../target/types/voting_dapp";
 import { expect } from "chai";
+
+const idl = require("../../app/app/idl.json");
 
 describe("voting-dapp", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.VotingDapp as Program<VotingDapp>;
-  const pollId = new anchor.BN(1);
+  const program = new Program(
+    { ...idl, address: idl.address } as anchor.Idl,
+    provider
+  ) as Program;
+  const pollId = new anchor.BN(Date.now());
 
   // Derive the Poll PDA
   const [pollPda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -38,7 +42,7 @@ describe("voting-dapp", () => {
 
     const pollAccount = await program.account.poll.fetch(pollPda);
 
-    expect(pollAccount.pollId.toNumber()).to.equal(1);
+    expect(pollAccount.pollId.toNumber()).to.equal(pollId.toNumber());
     expect(pollAccount.title).to.equal(title);
     expect(pollAccount.options).to.deep.equal(options);
     expect(pollAccount.votes.map((v) => v.toNumber())).to.deep.equal([0, 0, 0]);
@@ -214,12 +218,15 @@ describe("voting-dapp", () => {
     // Generate a new keypair to simulate a different voter
     const newVoter = anchor.web3.Keypair.generate();
 
-    // Airdrop to new voter
-    const sig = await provider.connection.requestAirdrop(
-      newVoter.publicKey,
-      1_000_000_000
+    await provider.sendAndConfirm(
+      new anchor.web3.Transaction().add(
+        anchor.web3.SystemProgram.transfer({
+          fromPubkey: provider.wallet.publicKey,
+          toPubkey: newVoter.publicKey,
+          lamports: 20_000_000,
+        })
+      )
     );
-    await provider.connection.confirmTransaction(sig);
 
     const [voteRecordPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [
