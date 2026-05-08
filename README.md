@@ -2,7 +2,6 @@
 
 <img width="2800" height="1526" alt="image" src="https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151" />
 
-
 > Izgrađeno za **LIBROS Hackathon 2026** — Blockchain aplikacija za glasanje koristeći Solana i Anchor framework.
 
 🔗 **Live Demo (Vercel):** [hackathon-ruby-nine.vercel.app](https://hackathon-ruby-nine.vercel.app/)
@@ -102,6 +101,12 @@ Naš Anchor program izlaže četiri glavne instrukcije za klijentsku interakciju
 
 * **Poll Account**: Sadrži ID, autora, naslov, vektor opcija, vektor glasova, timestamp kreiranja i boolean status aktivnosti.
 * **Vote Record (PDA)**: Relacijski račun koji trajno spaja `voter_pubkey` i `poll_id`, osiguravajući integritet pravila "jedan korisnik - jedan glas".
+
+## 🎥 Video Demonstracija
+
+<video src="https://github.com/tihomirdrustvic/hackathon/raw/main/2026-05-08%2014-02-11.mp4" controls="controls" style="max-width: 100%;">
+  Vaš preglednik ne podržava video tag.
+</video>
 
 ## 👥 Tim
 
