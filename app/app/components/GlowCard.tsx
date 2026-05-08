@@ -38,13 +38,15 @@ const GlowCard: React.FC<GlowCardProps> = ({
 
   useEffect(() => {
     const syncPointer = (e: PointerEvent) => {
-      const { clientX: x, clientY: y } = e;
-      
       if (cardRef.current) {
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
         cardRef.current.style.setProperty('--x', x.toFixed(2));
-        cardRef.current.style.setProperty('--xp', (x / window.innerWidth).toFixed(2));
+        cardRef.current.style.setProperty('--xp', (x / rect.width).toFixed(2));
         cardRef.current.style.setProperty('--y', y.toFixed(2));
-        cardRef.current.style.setProperty('--yp', (y / window.innerHeight).toFixed(2));
+        cardRef.current.style.setProperty('--yp', (y / rect.height).toFixed(2));
       }
     };
 
@@ -72,9 +74,8 @@ const GlowCard: React.FC<GlowCardProps> = ({
       '--backup-border': 'var(--backdrop)',
       '--size': '200',
       '--outer': '1',
-      // set placeholder values; we'll compute pixel values below to avoid nested `calc()`
-      '--border-size': '2px',
-      '--spotlight-size': '150px',
+      '--border-size': 'calc(var(--border, 2) * 1px)',
+      '--spotlight-size': 'calc(var(--size, 150) * 1px)',
       '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
       backgroundImage: `radial-gradient(
         var(--spotlight-size) var(--spotlight-size) at
@@ -85,7 +86,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
       backgroundColor: 'var(--backdrop, transparent)',
       backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
       backgroundPosition: '50% 50%',
-      backgroundAttachment: 'fixed',
+      backgroundAttachment: 'scroll',
       border: 'var(--border-size) solid var(--backup-border)',
       position: 'relative' as const,
       touchAction: 'none' as const,
@@ -99,58 +100,62 @@ const GlowCard: React.FC<GlowCardProps> = ({
       baseStyles.height = typeof height === 'number' ? `${height}px` : height;
     }
 
-    // Compute pixel values for sizes to avoid nested `calc()` usage in the injected CSS
-    const borderVal = Number(baseStyles['--border']) || 2;
-    const sizeVal = Number(baseStyles['--size']) || 150;
-    baseStyles['--border-size'] = `${borderVal}px`;
-    baseStyles['--spotlight-size'] = `${sizeVal}px`;
-
     return baseStyles;
   };
 
   const beforeAfterStyles = `
-    /* Simplified pseudo-elements for broader browser support */
     [data-glow]::before,
     [data-glow]::after {
+      pointer-events: none;
       content: "";
       position: absolute;
-      inset: 0;
-      pointer-events: none;
+      inset: calc(var(--border-size) * -1);
+      border: var(--border-size) solid transparent;
       border-radius: calc(var(--radius) * 1px);
-      z-index: 0;
+      background-attachment: scroll;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      mask: linear-gradient(white, white) padding-box, linear-gradient(white, white) border-box;
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
     }
-
-    /* soft colored glow */
-    [data-glow]::after {
-      background: radial-gradient(
-        circle at calc(var(--x, 50) * 1px) calc(var(--y, 50) * 1px),
-        hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 60) * 1%) / 0.5),
-        transparent 40%
-      );
-      filter: blur(48px);
-      mix-blend-mode: screen;
-      opacity: 0.9;
-    }
-
-    /* bright central highlight */
+    
     [data-glow]::before {
-      background: radial-gradient(
-        circle at calc(var(--x, 50) * 1px) calc(var(--y, 50) * 1px),
-        rgba(255,255,255,0.9),
-        transparent 20%
+      background-image: radial-gradient(
+        calc(var(--spotlight-size) * 0.8) calc(var(--spotlight-size) * 0.8) at
+        calc(var(--x, 0) * 1px)
+        calc(var(--y, 0) * 1px),
+        hsl(var(--hue, 210) 100% 60% / var(--border-spot-opacity, 1)), transparent 100%
       );
-      filter: blur(20px);
-      opacity: 0.6;
+      filter: brightness(2.5) saturate(1.5);
     }
-
-    /* inner overlay holder */
-    [data-glow] > [data-glow] {
+    
+    [data-glow]::after {
+      background-image: radial-gradient(
+        calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
+        calc(var(--x, 0) * 1px)
+        calc(var(--y, 0) * 1px),
+        hsl(0 0% 100% / var(--border-light-opacity, 1)), transparent 100%
+      );
+    }
+    
+    [data-glow] [data-glow] {
       position: absolute;
       inset: 0;
-      z-index: 1;
+      will-change: filter;
+      opacity: var(--outer, 1);
       pointer-events: none;
-      border-radius: calc(var(--radius) * 1px);
-      background: transparent;
+    }
+    
+    [data-glow] > [data-glow]::before {
+      inset: -25px;
+      border-width: 25px;
+      filter: blur(20px) brightness(2);
+    }
+
+    [data-glow] > [data-glow]::after {
+      display: none;
     }
   `;
 

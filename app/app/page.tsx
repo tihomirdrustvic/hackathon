@@ -369,7 +369,7 @@ export default function Home() {
               <div className="benefit-text">
                 <h3>Stvoreno za Škole — Spremno za Svijet</h3>
                 <p>
-                  Bilo da razred bira izlet, majice ili predsjednika razreda, VoteDApp daje institucionalnu razinu integriteta svakodnevnim odlukama.
+                  Bilo da razred bira izlet, majice ili predsjednika razreda, LIBROS daje institucionalnu razinu integriteta svakodnevnim odlukama.
                 </p>
               </div>
             </div>
@@ -475,7 +475,7 @@ export default function Home() {
                       customSize
                       glowColor={isActive ? "green" : "red"}
                       width="100%"
-                      className="card p-7 cursor-pointer group min-h-[160px] overflow-hidden transition-transform duration-200 hover:-translate-y-1"
+                      className="card p-7 cursor-pointer group min-h-[160px] transition-transform duration-200 hover:-translate-y-1"
                     >
                       <div className="flex items-start justify-between gap-3 mb-4">
                         <h3
