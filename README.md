@@ -252,9 +252,9 @@ docker run -p 3000:3000 votedapp
 | Deploy na Vercel | ✅ Upute dane | +1 |
 | Napredni UI/UX | ✅ Glassmorphism, animacije, responsive | +1 |
 
-## 👤 Autor
+## 👤 Autori
 
-LIBROS Hackathon 2026
+Lana Baćani, Antonija Jurić, Antun Kozlović, Filip Kurel, Andrej Papić
 
 ## 📄 Licenca
 
