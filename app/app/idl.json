@@ -5,13 +5,16 @@
     {
       "name": "createPoll",
       "accounts": [
-        { "name": "poll", "isMut": true, "isSigner": true },
+        { "name": "poll", "isMut": true, "isSigner": false },
         { "name": "author", "isMut": true, "isSigner": true },
         { "name": "systemProgram", "isMut": false, "isSigner": false }
       ],
       "args": [
+        { "name": "pollId", "type": "u64" },
         { "name": "title", "type": "string" },
-        { "name": "options", "type": { "vec": "string" } }
+        { "name": "options", "type": { "vec": "string" } },
+        { "name": "deadline", "type": { "option": "i64" } },
+        { "name": "whitelist", "type": { "option": { "vec": "publicKey" } } }
       ]
     },
     {
@@ -23,7 +26,27 @@
         { "name": "systemProgram", "isMut": false, "isSigner": false }
       ],
       "args": [
+        { "name": "pollId", "type": "u64" },
         { "name": "optionIndex", "type": "u32" }
+      ]
+    },
+    {
+      "name": "closePoll",
+      "accounts": [
+        { "name": "poll", "isMut": true, "isSigner": false },
+        { "name": "author", "isMut": true, "isSigner": true }
+      ],
+      "args": [
+        { "name": "pollId", "type": "u64" }
+      ]
+    },
+    {
+      "name": "getResults",
+      "accounts": [
+        { "name": "poll", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "pollId", "type": "u64" }
       ]
     }
   ],
@@ -33,10 +56,16 @@
       "type": {
         "kind": "struct",
         "fields": [
+          { "name": "pollId", "type": "u64" },
           { "name": "author", "type": "publicKey" },
           { "name": "title", "type": "string" },
           { "name": "options", "type": { "vec": "string" } },
-          { "name": "votes", "type": { "vec": "u64" } }
+          { "name": "votes", "type": { "vec": "u64" } },
+          { "name": "totalVotes", "type": "u64" },
+          { "name": "timestamp", "type": "i64" },
+          { "name": "isActive", "type": "bool" },
+          { "name": "deadline", "type": { "option": "i64" } },
+          { "name": "whitelist", "type": { "vec": "publicKey" } }
         ]
       }
     },
@@ -46,16 +75,37 @@
         "kind": "struct",
         "fields": [
           { "name": "voter", "type": "publicKey" },
-          { "name": "poll", "type": "publicKey" }
+          { "name": "poll", "type": "publicKey" },
+          { "name": "optionIndex", "type": "u32" },
+          { "name": "timestamp", "type": "i64" }
         ]
       }
     }
   ],
-  "errors": [
+  "events": [
     {
-      "code": 6000,
-      "name": "InvalidOption",
-      "msg": "Invalid option index"
+      "name": "PollResults",
+      "fields": [
+        { "name": "pollId", "type": "u64", "index": false },
+        { "name": "title", "type": "string", "index": false },
+        { "name": "options", "type": { "vec": "string" }, "index": false },
+        { "name": "votes", "type": { "vec": "u64" }, "index": false },
+        { "name": "totalVotes", "type": "u64", "index": false },
+        { "name": "isActive", "type": "bool", "index": false }
+      ]
     }
+  ],
+  "errors": [
+    { "code": 6000, "name": "InvalidOption", "msg": "Invalid option index" },
+    { "code": 6001, "name": "TooFewOptions", "msg": "You must provide at least 2 options" },
+    { "code": 6002, "name": "TooManyOptions", "msg": "You cannot provide more than 10 options" },
+    { "code": 6003, "name": "TitleTooLong", "msg": "Title must be 100 characters or fewer" },
+    { "code": 6004, "name": "PollClosed", "msg": "This poll has been closed" },
+    { "code": 6005, "name": "PollExpired", "msg": "This poll has expired" },
+    { "code": 6006, "name": "DeadlineInPast", "msg": "The deadline must be in the future" },
+    { "code": 6007, "name": "NotWhitelisted", "msg": "You are not whitelisted for this poll" },
+    { "code": 6008, "name": "Unauthorized", "msg": "Only the poll author can perform this action" },
+    { "code": 6009, "name": "PollAlreadyClosed", "msg": "This poll has already been closed" },
+    { "code": 6010, "name": "Overflow", "msg": "Arithmetic overflow" }
   ]
 }
