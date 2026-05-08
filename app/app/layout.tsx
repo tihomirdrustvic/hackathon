@@ -1,3 +1,4 @@
+import "./buffer-polyfill";
 import "./globals.css";
 import Providers from "./Providers";
 import Link from "next/link";
@@ -24,44 +25,55 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Pixelify+Sans:wght@400..700&family=Space+Grotesk:wght@300..700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body>
         <Providers>
           {/* ─── Navigation ─────────────────────────────────── */}
-          <nav
-            className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-            style={{
-              background: "rgba(3, 3, 3, 0.85)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
-            <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center justify-between">
+          <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none" style={{ paddingTop: "16px" }}>
+            <div
+              className="pointer-events-auto flex items-center justify-between gap-6 px-8 py-3"
+              style={{
+                width: "min(960px, calc(100% - 32px))",
+                background: "rgba(8, 8, 12, 0.80)",
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+                border: "1px solid rgba(255,255,255,0.10)",
+                borderRadius: "100px",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+              }}
+            >
               <Link
                 href="/"
                 id="nav-home"
-                className="font-display font-extrabold text-[22px] tracking-tight text-gradient"
+                className="font-display font-extrabold text-[20px] tracking-tight text-gradient shrink-0"
                 style={{ letterSpacing: "-0.5px" }}
               >
                 LIBROS
               </Link>
 
-              <div className="flex items-center gap-3 sm:gap-4">
+              <style>{`
+                .wallet-adapter-button .wallet-adapter-button-start-icon { display: none !important; }
+              `}</style>
+
+              <div className="flex items-center gap-4">
+                <WalletButton />
                 <Link
                   href="/create"
                   id="nav-create-poll"
-                  className="btn-ghost hidden sm:inline-flex"
+                  className="btn-primary hidden sm:inline-flex"
                 >
                   Kreiraj Anketu
                 </Link>
-                <WalletButton />
               </div>
             </div>
           </nav>
 
           {/* ─── Main Content ───────────────────────────────── */}
-          <main className="max-w-[1200px] mx-auto px-6 pt-24 pb-12 min-h-screen relative z-10">
+          <main className="w-full pt-24 pb-12 min-h-screen relative z-10 overflow-hidden">
             {children}
           </main>
 
@@ -97,9 +109,6 @@ export default function RootLayout({
                   >
                     <span style={{ fontSize: "16px" }}>◎</span>
                     Solana Devnet
-                  </span>
-                  <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.4)" }}>
-                    LIBROS Hackathon 2026
                   </span>
                 </div>
               </div>

@@ -2,14 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import * as anchor from "@coral-xyz/anchor";
-import { PublicKey, SystemProgram } from "@solana/web3.js";
-import idl from "../../idl.json";
+import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import Link from "next/link";
-
-const PROGRAM_ID = new PublicKey(
-  "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
-);
+import { PROGRAM_ID, voteRecordPda as computeVoteRecordPda } from "../../utils/program";
 
 const BAR_COLORS = [
   "option-bar-indigo",
@@ -45,38 +40,21 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
   const fetchPollData = useCallback(async () => {
     try {
-      const provider = new anchor.AnchorProvider(connection, wallet as any, {
-        preflightCommitment: "processed",
-      });
-      const program = new anchor.Program(idl as any, PROGRAM_ID, provider);
+      const res = await fetch(`/api/poll/${params.id}`, { cache: "no-store" });
+      if (!res.ok) throw new Error("Anketa nije pronađena.");
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
 
-      const fetchedPoll = await program.account.poll.fetch(pollKey);
-      setPoll(fetchedPoll);
-
-      // Fetch all vote records to get voter wallet addresses
-      const allVoteRecords = await program.account.voteRecord.all([
-        {
-          memcmp: {
-            offset: 8 + 32,
-            bytes: pollKey.toBase58(),
-          },
-        },
-      ]);
-
-      const voterList: VoterInfo[] = allVoteRecords.map((record) => ({
-        voter: record.account.voter.toString(),
-        optionIndex: record.account.optionIndex,
-        timestamp: record.account.timestamp.toNumber(),
-      }));
-
-      setVoters(voterList);
+      setPoll(data.poll);
+      setVoters(data.voters);
+      setError("");
     } catch (err) {
       console.error("Error fetching poll:", err);
       setError("Anketa nije pronađena.");
     } finally {
       setLoading(false);
     }
-  }, [connection, wallet, pollKey.toString()]);
+  }, [params.id]);
 
   useEffect(() => {
     fetchPollData();
@@ -98,25 +76,30 @@ export default function PollDetails({ params }: { params: { id: string } }) {
     setSuccess("");
 
     try {
-      const provider = new anchor.AnchorProvider(connection, wallet as any, {
-        preflightCommitment: "processed",
+      console.log("[Vote] Building transaction via API...");
+      const res = await fetch(`/api/poll/${params.id}/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          optionIndex: index,
+          walletPubkey: wallet.publicKey.toString(),
+          pollId: poll.pollId,
+        }),
       });
-      const program = new anchor.Program(idl as any, PROGRAM_ID, provider);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to build vote tx");
 
-      const [voteRecordPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("vote"), pollKey.toBuffer(), wallet.publicKey.toBuffer()],
-        program.programId
-      );
+      const binaryString = atob(data.tx);
+      const txBytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        txBytes[i] = binaryString.charCodeAt(i);
+      }
+      const transaction = Transaction.from(txBytes);
+      const signed = await wallet.signTransaction!(transaction);
 
-      await program.methods
-        .vote(new anchor.BN(poll.pollId.toNumber()), index)
-        .accounts({
-          poll: pollKey,
-          voteRecord: voteRecordPda,
-          voter: wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
+      if (!connection) throw new Error("No connection");
+      const signature = await connection.sendRawTransaction(signed.serialize());
+      await connection.confirmTransaction(signature);
 
       setSuccess("Glas uspješno zapisan na Solana blockchain!");
       await fetchPollData();
@@ -141,15 +124,28 @@ export default function PollDetails({ params }: { params: { id: string } }) {
   const handleClosePoll = async () => {
     if (!wallet.connected || !wallet.publicKey) return;
     try {
-      const provider = new anchor.AnchorProvider(connection, wallet as any, {
-        preflightCommitment: "processed",
+      const res = await fetch(`/api/poll/${params.id}/close`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          walletPubkey: wallet.publicKey.toString(),
+          pollId: poll.pollId,
+        }),
       });
-      const program = new anchor.Program(idl as any, PROGRAM_ID, provider);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to build close tx");
 
-      await program.methods
-        .closePoll(new anchor.BN(poll.pollId.toNumber()))
-        .accounts({ poll: pollKey, author: wallet.publicKey })
-        .rpc();
+      const binaryString = atob(data.tx);
+      const txBytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        txBytes[i] = binaryString.charCodeAt(i);
+      }
+      const transaction = Transaction.from(txBytes);
+      const signed = await wallet.signTransaction!(transaction);
+
+      if (!connection) throw new Error("No connection");
+      const signature = await connection.sendRawTransaction(signed.serialize());
+      await connection.confirmTransaction(signature);
 
       setSuccess("Anketa je zatvorena.");
       await fetchPollData();
@@ -184,16 +180,16 @@ export default function PollDetails({ params }: { params: { id: string } }) {
     );
   }
 
-  const totalVotes = poll.totalVotes.toNumber();
-  const isAuthor = wallet.publicKey?.toString() === poll.author.toString();
-  const createdDate = new Date(poll.timestamp.toNumber() * 1000);
+  const totalVotes = poll.totalVotes;
+  const isAuthor = wallet.publicKey?.toString() === poll.author;
+  const createdDate = new Date(poll.timestamp * 1000);
   const hasDeadline = poll.deadline !== null && poll.deadline !== undefined;
-  const deadlineDate = hasDeadline ? new Date(poll.deadline.toNumber() * 1000) : null;
+  const deadlineDate = hasDeadline ? new Date(poll.deadline * 1000) : null;
   const isExpired = hasDeadline && deadlineDate && deadlineDate.getTime() < Date.now();
   const canVote = poll.isActive && !isExpired;
 
   return (
-    <div className="max-w-3xl mx-auto animate-fade-up">
+    <div className="max-w-3xl mx-auto px-6 animate-fade-up">
       {/* Back */}
       <Link
         href="/"
@@ -267,7 +263,7 @@ export default function PollDetails({ params }: { params: { id: string } }) {
         {/* ─── Options (mock-option style) ──────────────────── */}
         <div className="space-y-3 stagger">
           {poll.options.map((option: string, index: number) => {
-            const votes = poll.votes[index].toNumber();
+            const votes = poll.votes[index];
             const percentage = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
 
             return (
@@ -345,16 +341,16 @@ export default function PollDetails({ params }: { params: { id: string } }) {
         </div>
 
         {/* Wallet Chips (matching claude-frontend) */}
-        {voters.length > 0 && (
+        {voters?.length > 0 && (
           <div className="flex gap-2 flex-wrap mt-4">
             {voters.slice(0, 3).map((v, i) => (
               <div key={i} className="wallet-chip">
                 {v.voter.slice(0, 4)}...{v.voter.slice(-4)}
               </div>
             ))}
-            {voters.length > 3 && (
+            {voters?.length > 3 && (
               <div className="wallet-chip">
-                +{voters.length - 3} više
+                +{voters?.length - 3} više
               </div>
             )}
           </div>
@@ -422,7 +418,7 @@ export default function PollDetails({ params }: { params: { id: string } }) {
               className="font-display text-xs font-semibold px-2 py-0.5 rounded-full"
               style={{ background: "var(--surface2)", color: "rgba(255,255,255,0.5)" }}
             >
-              {voters.length}
+              {voters?.length}
             </span>
           </h2>
           <span
@@ -438,7 +434,7 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
         {showVoters && (
           <div className="mt-5 space-y-2 animate-fade-in">
-            {voters.length === 0 ? (
+            {voters?.length === 0 ? (
               <p className="text-center py-6" style={{ fontSize: "14px", color: "rgba(255,255,255,0.3)" }}>
                 Još nitko nije glasao na ovoj anketi.
               </p>

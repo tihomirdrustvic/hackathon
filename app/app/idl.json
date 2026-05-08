@@ -1,29 +1,35 @@
 {
-  "version": "0.1.0",
-  "name": "voting_dapp",
+  "address": "GwqoDrpHQHiKWbHA6RFr84tNZbm22u8UTQABKDt8j8KM",
+  "metadata": {
+    "name": "voting_dapp",
+    "version": "0.1.0",
+    "spec": "0.1.0"
+  },
   "instructions": [
     {
       "name": "createPoll",
+      "discriminator": [182, 171, 112, 238, 6, 219, 14, 110],
       "accounts": [
-        { "name": "poll", "isMut": true, "isSigner": false },
-        { "name": "author", "isMut": true, "isSigner": true },
-        { "name": "systemProgram", "isMut": false, "isSigner": false }
+        { "name": "poll", "writable": true },
+        { "name": "author", "writable": true, "signer": true },
+        { "name": "systemProgram", "address": "11111111111111111111111111111111" }
       ],
       "args": [
         { "name": "pollId", "type": "u64" },
         { "name": "title", "type": "string" },
         { "name": "options", "type": { "vec": "string" } },
         { "name": "deadline", "type": { "option": "i64" } },
-        { "name": "whitelist", "type": { "option": { "vec": "publicKey" } } }
+        { "name": "whitelist", "type": { "option": { "vec": "pubkey" } } }
       ]
     },
     {
       "name": "vote",
+      "discriminator": [227, 110, 155, 23, 136, 126, 172, 25],
       "accounts": [
-        { "name": "poll", "isMut": true, "isSigner": false },
-        { "name": "voteRecord", "isMut": true, "isSigner": false },
-        { "name": "voter", "isMut": true, "isSigner": true },
-        { "name": "systemProgram", "isMut": false, "isSigner": false }
+        { "name": "poll", "writable": true },
+        { "name": "voteRecord", "writable": true },
+        { "name": "voter", "writable": true, "signer": true },
+        { "name": "systemProgram", "address": "11111111111111111111111111111111" }
       ],
       "args": [
         { "name": "pollId", "type": "u64" },
@@ -32,9 +38,10 @@
     },
     {
       "name": "closePoll",
+      "discriminator": [139, 213, 162, 65, 172, 150, 123, 67],
       "accounts": [
-        { "name": "poll", "isMut": true, "isSigner": false },
-        { "name": "author", "isMut": true, "isSigner": true }
+        { "name": "poll", "writable": true },
+        { "name": "author", "writable": true, "signer": true }
       ],
       "args": [
         { "name": "pollId", "type": "u64" }
@@ -42,8 +49,9 @@
     },
     {
       "name": "getResults",
+      "discriminator": [137, 44, 100, 59, 220, 97, 105, 111],
       "accounts": [
-        { "name": "poll", "isMut": false, "isSigner": false }
+        { "name": "poll" }
       ],
       "args": [
         { "name": "pollId", "type": "u64" }
@@ -51,49 +59,11 @@
     }
   ],
   "accounts": [
-    {
-      "name": "Poll",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          { "name": "pollId", "type": "u64" },
-          { "name": "author", "type": "publicKey" },
-          { "name": "title", "type": "string" },
-          { "name": "options", "type": { "vec": "string" } },
-          { "name": "votes", "type": { "vec": "u64" } },
-          { "name": "totalVotes", "type": "u64" },
-          { "name": "timestamp", "type": "i64" },
-          { "name": "isActive", "type": "bool" },
-          { "name": "deadline", "type": { "option": "i64" } },
-          { "name": "whitelist", "type": { "vec": "publicKey" } }
-        ]
-      }
-    },
-    {
-      "name": "VoteRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          { "name": "voter", "type": "publicKey" },
-          { "name": "poll", "type": "publicKey" },
-          { "name": "optionIndex", "type": "u32" },
-          { "name": "timestamp", "type": "i64" }
-        ]
-      }
-    }
+    { "name": "Poll", "discriminator": [110, 234, 167, 188, 231, 136, 153, 111] },
+    { "name": "VoteRecord", "discriminator": [112, 9, 123, 165, 234, 9, 157, 167] }
   ],
   "events": [
-    {
-      "name": "PollResults",
-      "fields": [
-        { "name": "pollId", "type": "u64", "index": false },
-        { "name": "title", "type": "string", "index": false },
-        { "name": "options", "type": { "vec": "string" }, "index": false },
-        { "name": "votes", "type": { "vec": "u64" }, "index": false },
-        { "name": "totalVotes", "type": "u64", "index": false },
-        { "name": "isActive", "type": "bool", "index": false }
-      ]
-    }
+    { "name": "PollResults", "discriminator": [126, 192, 56, 68, 142, 67, 118, 12] }
   ],
   "errors": [
     { "code": 6000, "name": "InvalidOption", "msg": "Invalid option index" },
@@ -107,5 +77,51 @@
     { "code": 6008, "name": "Unauthorized", "msg": "Only the poll author can perform this action" },
     { "code": 6009, "name": "PollAlreadyClosed", "msg": "This poll has already been closed" },
     { "code": 6010, "name": "Overflow", "msg": "Arithmetic overflow" }
+  ],
+  "types": [
+    {
+      "name": "Poll",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "pollId", "type": "u64" },
+          { "name": "author", "type": "pubkey" },
+          { "name": "title", "type": "string" },
+          { "name": "options", "type": { "vec": "string" } },
+          { "name": "votes", "type": { "vec": "u64" } },
+          { "name": "totalVotes", "type": "u64" },
+          { "name": "timestamp", "type": "i64" },
+          { "name": "isActive", "type": "bool" },
+          { "name": "deadline", "type": { "option": "i64" } },
+          { "name": "whitelist", "type": { "vec": "pubkey" } }
+        ]
+      }
+    },
+    {
+      "name": "VoteRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "voter", "type": "pubkey" },
+          { "name": "poll", "type": "pubkey" },
+          { "name": "optionIndex", "type": "u32" },
+          { "name": "timestamp", "type": "i64" }
+        ]
+      }
+    },
+    {
+      "name": "PollResults",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "pollId", "type": "u64" },
+          { "name": "title", "type": "string" },
+          { "name": "options", "type": { "vec": "string" } },
+          { "name": "votes", "type": { "vec": "u64" } },
+          { "name": "totalVotes", "type": "u64" },
+          { "name": "isActive", "type": "bool" }
+        ]
+      }
+    }
   ]
 }

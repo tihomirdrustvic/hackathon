@@ -2,14 +2,10 @@
 
 import { useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import * as anchor from "@coral-xyz/anchor";
-import { PublicKey, SystemProgram } from "@solana/web3.js";
-import idl from "../idl.json";
+import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/navigation";
 
-const PROGRAM_ID = new PublicKey(
-  "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
-);
+const MIN_CREATE_BALANCE_LAMPORTS = 0.01 * LAMPORTS_PER_SOL;
 
 export default function CreatePoll() {
   const { connection } = useConnection();
@@ -20,6 +16,7 @@ export default function CreatePoll() {
   const [options, setOptions] = useState(["", ""]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [useDeadline, setUseDeadline] = useState(false);
   const [deadlineDate, setDeadlineDate] = useState("");
   const [deadlineTime, setDeadlineTime] = useState("");
@@ -32,7 +29,7 @@ export default function CreatePoll() {
   };
 
   const handleRemoveOption = (index: number) => {
-    if (options.length <= 2) return;
+    if (options?.length <= 2) return;
     setOptions(options.filter((_, i) => i !== index));
   };
 
@@ -41,6 +38,9 @@ export default function CreatePoll() {
     newOptions[index] = value;
     setOptions(newOptions);
   };
+
+  const getFundingMessage = () =>
+    `Wallet nema dovoljno Devnet SOL-a za kreiranje ankete. Pokreni: solana airdrop 2 ${wallet.publicKey?.toString()} --url devnet`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,27 +62,29 @@ export default function CreatePoll() {
 
     setIsSubmitting(true);
     setError("");
+    setSuccess("");
 
     try {
-      const provider = new anchor.AnchorProvider(connection, wallet as any, {
-        preflightCommitment: "processed",
-      });
-      const program = new anchor.Program(idl as any, PROGRAM_ID, provider);
+      if (!connection) throw new Error("Connection not established");
 
-      const pollId = new anchor.BN(Date.now());
+      const balance = await connection.getBalance(wallet.publicKey);
+      if (balance < MIN_CREATE_BALANCE_LAMPORTS) {
+        setError(getFundingMessage());
+        setIsSubmitting(false);
+        return;
+      }
 
-      const [pollPda] = PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("poll"),
-          wallet.publicKey.toBuffer(),
-          pollId.toArrayLike(Buffer, "le", 8),
-        ],
-        program.programId
-      );
+      console.log("[CreatePoll] Creating program...");
+      console.log("[CreatePoll] Program interaction will be via API");
 
-      let deadline: anchor.BN | null = null;
+      console.log("[CreatePoll] Creating pollId BN...");
+      const pollId = Date.now();
+      console.log("[CreatePoll] pollId:", pollId);
+
+      console.log("[CreatePoll] filteredOptions:", filteredOptions);
+      let deadlineTimestamp: number | null = null;
       if (useDeadline && deadlineDate && deadlineTime) {
-        const deadlineTimestamp = Math.floor(
+        deadlineTimestamp = Math.floor(
           new Date(`${deadlineDate}T${deadlineTime}`).getTime() / 1000
         );
         if (deadlineTimestamp <= Math.floor(Date.now() / 1000)) {
@@ -90,17 +92,17 @@ export default function CreatePoll() {
           setIsSubmitting(false);
           return;
         }
-        deadline = new anchor.BN(deadlineTimestamp);
       }
 
-      let whitelist: PublicKey[] | null = null;
+      let whitelistStrings: string[] | null = null;
       if (useWhitelist && whitelistInput.trim()) {
         try {
-          whitelist = whitelistInput
+          whitelistStrings = whitelistInput
             .split(/[\n,]+/)
             .map((address) => address.trim())
-            .filter(Boolean)
-            .map((address) => new PublicKey(address));
+            .filter(Boolean);
+          // Just validating they are valid keys before sending to server
+          whitelistStrings.forEach(address => new PublicKey(address));
         } catch {
           setError("Whitelist sadrži neispravnu wallet adresu.");
           setIsSubmitting(false);
@@ -108,26 +110,70 @@ export default function CreatePoll() {
         }
       }
 
-      await program.methods
-        .createPoll(pollId, title, filteredOptions, deadline, whitelist)
-        .accounts({
-          poll: pollPda,
-          author: wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
+      console.log("[CreatePoll] Calling API to build transaction...");
 
-      router.push(`/poll/${pollPda.toString()}`);
+      const res = await fetch("/api/create-poll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pollId,
+          title,
+          filteredOptions,
+          deadline: deadlineTimestamp,
+          whitelist: whitelistStrings,
+          walletPubkey: wallet.publicKey.toString(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to create transaction");
+      }
+
+      console.log("[CreatePoll] Signing transaction...");
+      // Decode base64 to Uint8Array using browser native methods
+      const binaryString = atob(data.tx);
+      const txBytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        txBytes[i] = binaryString.charCodeAt(i);
+      }
+
+      const transaction = Transaction.from(txBytes);
+      const signed = await wallet.signTransaction!(transaction);
+
+      console.log("[CreatePoll] Sending transaction...");
+      const signature = await connection.sendRawTransaction(signed.serialize());
+      await connection.confirmTransaction(
+        {
+          signature,
+          blockhash: data.blockhash,
+          lastValidBlockHeight: data.lastValidBlockHeight,
+        },
+        "confirmed"
+      );
+
+      console.log("[CreatePoll] RPC successful, signature:", signature);
+      setSuccess(`Anketa je kreirana i zapisana na Devnet. Transakcija: ${signature.slice(0, 8)}...`);
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      router.push(`/poll/${data.pollPda}`);
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Greška pri kreiranju ankete.");
+      console.error("[CreatePoll] Error:", err);
+      console.error("[CreatePoll] Error stack:", err.stack);
+      const message = err.message || "Greška pri kreiranju ankete.";
+      if (
+        message.includes("Attempt to debit an account") ||
+        message.toLowerCase().includes("insufficient funds")
+      ) {
+        setError(getFundingMessage());
+      } else {
+        setError(message);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto animate-fade-up">
+    <div className="max-w-2xl mx-auto px-6 animate-fade-up">
       {/* Header */}
       <div className="text-center mb-10 pt-4">
         <div className="section-tag mb-6">✦ Nova Anketa</div>
@@ -156,6 +202,7 @@ export default function CreatePoll() {
               border: "1px solid rgba(244, 63, 94, 0.2)",
               color: "var(--rose-light)",
               fontSize: "14px",
+              overflowWrap: "anywhere",
             }}
             id="create-error"
           >

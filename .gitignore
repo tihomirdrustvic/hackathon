@@ -6,6 +6,7 @@ voting-dapp/node_modules/
 # Next.js
 app/.next/
 app/out/
+app/.next-dev*.log
 
 # Build
 voting-dapp/target/
