@@ -1,28 +1,6 @@
 # 🗳️ VoteDApp — Decentralizirani Sustav Glasanja
 
 <p align="center">
-  <img width="100%" height="auto" alt="VoteDApp Sučelje" src="https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151" />
-</p>
-
-<p align="center">
-  <i>Izgrađeno za <strong>LIBROS Hackathon 2026</strong></i><br>
-  Blockchain aplikacija za glasanje koristeći Solana i Anchor framework.
-</p>
-
-<p align="center">
-  <a href="https://hackathon-ruby-nine.vercel.app/">
-    <img src="https://img.shields.io/badge/Live%Ovo je prijedlog za poboljšani layout tvog Markdown dokumenta. Fokusirao sam se na čitljivost, bolju vizualnu hijerarhiju, isticanje ključnih informacija pomoću badgeva ("shieldova") i moderniji izgled usklađen s GitHub standardima.
-
-Također sam ispravio linkove u kodu koji su bili nepotrebno formatirani kao Markdown linkovi unutar code blockova.
-
-Samo kopiraj sadržaj ispod u svoj `README.md` file:
-
-***
-
-```markdown
-# 🗳️ VoteDApp — Decentralizirani Sustav Glasanja
-
-<p align="center">
   <img width="100%" height="auto" alt="VoteDApp Sučelje" src="[https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151](https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151)" />
 </p>
 
