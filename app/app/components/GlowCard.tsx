@@ -37,35 +37,21 @@ const GlowCard: React.FC<GlowCardProps> = ({
   const innerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-
     const syncPointer = (e: PointerEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      el.style.setProperty('--x', x.toFixed(2));
-      el.style.setProperty('--xp', (x / rect.width).toFixed(2));
-      el.style.setProperty('--y', y.toFixed(2));
-      el.style.setProperty('--yp', (y / rect.height).toFixed(2));
+      if (cardRef.current) {
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        cardRef.current.style.setProperty('--x', x.toFixed(2));
+        cardRef.current.style.setProperty('--xp', (x / rect.width).toFixed(2));
+        cardRef.current.style.setProperty('--y', y.toFixed(2));
+        cardRef.current.style.setProperty('--yp', (y / rect.height).toFixed(2));
+      }
     };
 
-    const handleLeave = () => {
-      const rect = el.getBoundingClientRect();
-      el.style.setProperty('--x', (rect.width / 2).toFixed(2));
-      el.style.setProperty('--y', (rect.height / 2).toFixed(2));
-      el.style.setProperty('--xp', '0.5');
-      el.style.setProperty('--yp', '0.5');
-    };
-
-    el.addEventListener('pointermove', syncPointer);
-    el.addEventListener('pointerleave', handleLeave);
-
-    return () => {
-      el.removeEventListener('pointermove', syncPointer);
-      el.removeEventListener('pointerleave', handleLeave);
-    };
+    document.addEventListener('pointermove', syncPointer);
+    return () => document.removeEventListener('pointermove', syncPointer);
   }, []);
 
   const { base, spread } = glowColorMap[glowColor];
