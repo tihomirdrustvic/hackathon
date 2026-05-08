@@ -6,8 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Syne', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif'],
+        display: ['Pixelify Sans', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
       },
     },
   },

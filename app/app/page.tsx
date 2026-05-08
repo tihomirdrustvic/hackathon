@@ -48,181 +48,313 @@ export default function Home() {
     (acc, p) => acc + p.account.totalVotes.toNumber(),
     0
   );
+  const featuredPoll = polls[0];
 
   return (
     <div className="animate-fade-up">
-      {/* ─── Hero ───────────────────────────────────────────── */}
-      <section className="text-center py-16 sm:py-24">
-        <div className="section-tag mb-10" style={{ animation: "fadeUp 1s 0.3s ease both" }}>
-          <span
-            className="w-2 h-2 rounded-full flex-shrink-0 animate-pulse-green"
-            style={{ background: "rgba(244, 63, 94, 0.8)" }}
-          />
-          <span>LIBROS Hackathon 2026</span>
+      <section className="hero -mx-6 -mt-24" id="hero">
+        <div className="hero-gradient-bg"></div>
+        <div className="hero-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+          <div className="shape shape-3"></div>
+          <div className="shape shape-4"></div>
+          <div className="shape shape-5"></div>
         </div>
+        <div className="hero-overlay-top"></div>
 
-        <h1
-          className="font-display font-extrabold leading-none mb-7"
-          style={{
-            fontSize: "clamp(48px, 7vw, 88px)",
-            letterSpacing: "-0.03em",
-            animation: "fadeUp 1s 0.5s ease both",
-          }}
-        >
-          <span className="text-gradient-white block">Glasaj Bez</span>
-          <span className="text-gradient block">Kompromisa</span>
-        </h1>
+        <div className="hero-content pt-24">
+          <div className="hero-badge">
+            <div className="badge-dot"></div>
+            <span>LIBROS Hackathon 2026</span>
+          </div>
 
-        <p
-          className="max-w-[520px] mx-auto mb-12 leading-relaxed"
-          style={{
-            fontSize: "clamp(15px, 2vw, 19px)",
-            color: "rgba(255,255,255,0.4)",
-            fontWeight: 300,
-            letterSpacing: "0.02em",
-            animation: "fadeUp 1s 0.7s ease both",
-          }}
-        >
-          Decentralizirano glasanje na Solana blockchainu — svaki glas je
-          trajan, provjerljiv i zaštićen kriptografijom.
-        </p>
+          <h1 className="hero-title">
+            <span className="hero-title-line1">Vote Without</span>
+            <span className="hero-title-line2">Compromise</span>
+          </h1>
 
-        <div
-          className="flex items-center justify-center gap-4 flex-wrap"
-          style={{ animation: "fadeUp 1s 0.9s ease both" }}
-        >
-          <Link href="/create" id="hero-create-poll">
-            <button className="btn-primary text-base px-8 py-3.5">
-              Kreiraj Anketu
-            </button>
-          </Link>
-          <Link href="#polls" id="hero-view-polls">
-            <button className="btn-ghost text-base px-8 py-3.5">
-              <span>▶</span> Pregledaj Ankete
-            </button>
-          </Link>
-        </div>
+          <p className="hero-sub">
+            Decentralizirano glasanje na Solana blockchainu — svaki glas je trajan,
+            provjerljiv i zaštićen kriptografijom.
+          </p>
 
-        {/* Hero Stats */}
-        <div
-          className="flex items-center justify-center gap-12 sm:gap-16 mt-20 pt-14 flex-wrap"
-          style={{
-            borderTop: "1px solid rgba(255,255,255,0.08)",
-            animation: "fadeUp 1s 1.1s ease both",
-          }}
-        >
-          {[
-            { num: "100%", label: "Nepromjenjivo" },
-            { num: "<1s", label: "Solana Finality" },
-            { num: `${polls.length}`, label: "Aktivnih Anketa" },
-            { num: `${totalVotes}`, label: "Ukupno Glasova" },
-          ].map((stat, i) => (
-            <div key={i} className="text-center">
-              <div
-                className="font-display font-extrabold text-gradient-white"
-                style={{
-                  fontSize: "36px",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                {stat.num}
+          <div className="hero-actions">
+            <Link href="/create" id="hero-create-poll" className="btn-hero-primary">
+              Create a Poll
+            </Link>
+            <Link href="#polls" id="hero-view-polls" className="btn-hero-secondary">
+              <span>▶</span> Pregledaj ankete
+            </Link>
+          </div>
+
+          <div className="hero-stats">
+            {[
+              { num: "100%", label: "Tamper-proof" },
+              { num: "<1s", label: "Solana Finality" },
+              { num: `${polls.length}`, label: "On-chain polls" },
+              { num: `${totalVotes}`, label: "Recorded votes" },
+            ].map((stat) => (
+              <div key={stat.label} className="stat">
+                <div className="stat-num">{stat.num}</div>
+                <div className="stat-label">{stat.label}</div>
               </div>
-              <div
-                className="mt-1"
-                style={{
-                  fontSize: "13px",
-                  color: "rgba(255,255,255,0.4)",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ─── Features Grid ──────────────────────────────────── */}
-      <section className="py-16">
-        <div className="text-center mb-16">
-          <div className="section-tag mb-6">✦ Značajke</div>
-          <h2
-            className="font-display font-extrabold"
-            style={{
-              fontSize: "clamp(32px, 4vw, 48px)",
-              lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Izgrađeno za <span className="text-gradient">povjerenje</span>
-          </h2>
-        </div>
+      <section className="features -mx-6" id="features">
+        <div className="container">
+          <div className="features-header reveal visible">
+            <div className="section-tag">✦ Features</div>
+            <h2 className="section-title">Built for <span>trust</span></h2>
+            <p className="section-sub">
+              Every feature is designed around one principle: your vote belongs to you,
+              not to any server or administrator.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger">
-          {[
-            {
-              icon: "🔐",
-              color: "rgba(99, 102, 241, 0.15)",
-              title: "Wallet Identitet",
-              desc: "Svaki glasač se autentificira putem Phantom walleta. Nema računa, nema lozinki — samo kriptografski potvrđen identitet.",
-            },
-            {
-              icon: "🚫",
-              color: "rgba(244, 63, 94, 0.15)",
-              title: "Nema Duplog Glasanja",
-              desc: "PDA računi na Solani osiguravaju jedan glas po walletu. Blockchain — ne mi — sprječava duplicirane glasove.",
-            },
-            {
-              icon: "📡",
-              color: "rgba(139, 92, 246, 0.15)",
-              title: "On-Chain Pohrana",
-              desc: "Ankete, opcije, glasovi i wallet adrese pohranjeni su na Solana Devnetu — bez privatnog servera.",
-            },
-            {
-              icon: "⚡",
-              color: "rgba(245, 158, 11, 0.15)",
-              title: "Sub-sekundna Finalnost",
-              desc: "Solana obrađuje tisuće transakcija u sekundi. Vaš glas je potvrđen i nepromjenjiv za manje od sekunde.",
-            },
-            {
-              icon: "🔍",
-              color: "rgba(6, 182, 212, 0.15)",
-              title: "Javna Provjerljivost",
-              desc: "Svatko može neovisno verificirati svaki glas na Solana Exploreru. Potpuna transparentnost.",
-            },
-            {
-              icon: "🛡️",
-              color: "rgba(34, 197, 94, 0.15)",
-              title: "Admin-Proof",
-              desc: "Smart contract provodi pravila. Jednom dani glas ni kreator ankete ne može promijeniti ili ukloniti.",
-            },
-          ].map((feat, i) => (
-            <div key={i} className="card p-8">
-              <div
-                className="w-[52px] h-[52px] rounded-[14px] flex items-center justify-center mb-6 text-2xl"
-                style={{ background: feat.color }}
-              >
-                {feat.icon}
+          <div className="features-grid">
+            {[
+              {
+                icon: "🔐",
+                color: "indigo",
+                title: "Wallet Identity",
+                desc: "Svaki glasač se autentificira putem Phantom walleta. Nema računa, nema lozinki — samo kriptografski potvrđen identitet.",
+              },
+              {
+                icon: "🚫",
+                color: "rose",
+                title: "No Double Voting",
+                desc: "PDA računi na Solani osiguravaju jedan glas po walletu. Blockchain sprječava duplicirane glasove.",
+              },
+              {
+                icon: "📡",
+                color: "violet",
+                title: "On-Chain Storage",
+                desc: "Ankete, opcije, glasovi i wallet adrese pohranjeni su na Solana Devnetu — bez privatnog servera.",
+              },
+              {
+                icon: "⚡",
+                color: "amber",
+                title: "Sub-second Finality",
+                desc: "Solana brzo potvrđuje transakcije, a svaki glas ostaje trajno zapisan na blockchainu.",
+              },
+              {
+                icon: "🔍",
+                color: "cyan",
+                title: "Public Verifiability",
+                desc: "Svatko može provjeriti rezultate i wallet adrese glasača direktno iz javnih on-chain podataka.",
+              },
+              {
+                icon: "🛡️",
+                color: "green",
+                title: "Admin-Proof",
+                desc: "Smart contract provodi pravila. Jednom dani glas ni kreator ankete ne može promijeniti ili ukloniti.",
+              },
+            ].map((feat) => (
+              <div key={feat.title} className="feature-card reveal visible">
+                <div className={`feature-icon ${feat.color}`}>{feat.icon}</div>
+                <div className="feature-title">{feat.title}</div>
+                <p className="feature-desc">{feat.desc}</p>
               </div>
-              <h3
-                className="font-display font-bold mb-3"
-                style={{ fontSize: "18px", letterSpacing: "-0.01em" }}
-              >
-                {feat.title}
-              </h3>
-              <p
-                className="leading-relaxed"
-                style={{ fontSize: "15px", color: "rgba(255,255,255,0.4)" }}
-              >
-                {feat.desc}
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="how -mx-6" id="how">
+        <div className="container">
+          <div className="how-inner">
+            <div>
+              <div className="section-tag reveal visible">✦ How It Works</div>
+              <h2 className="section-title reveal visible">Three steps to <span>immutable</span> democracy</h2>
+              <p className="section-sub reveal visible" style={{ marginBottom: "48px" }}>
+                Powered by Anchor Framework and Solana blockchain. Built in Rust for maximum security and performance.
               </p>
+
+              <div className="how-steps">
+                {[
+                  ["01", "Connect your Phantom Wallet", "No registration. Your wallet address is your identity — verified on every action you take."],
+                  ["02", "Create or Find a Poll", "Define your question and options. create_poll writes your poll directly to Solana Devnet."],
+                  ["03", "Cast your Vote On-Chain", "The vote instruction creates a PDA tied to your wallet, making double voting impossible."],
+                  ["04", "Watch Results in Real Time", "Results are read directly from chain, including totals and voter wallet addresses."],
+                ].map(([num, title, desc]) => (
+                  <div key={num} className="step visible">
+                    <div className="step-num">{num}</div>
+                    <div className="step-content">
+                      <h3>{title}</h3>
+                      <p>{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+
+            <div className="how-visual reveal visible">
+              <div className="mock-card" id="howMockCard">
+                <div className="mock-header">
+                  <div className="mock-title">Glasanje u tijeku</div>
+                  <div className="mock-live">
+                    <div className="live-dot"></div>
+                    LIVE na Devnet
+                  </div>
+                </div>
+                <div className="mock-question">🏖️ Kamo idemo na maturalno putovanje?</div>
+                <div className="mock-options">
+                  {[
+                    ["🌊 Zadar", "62%", ""],
+                    ["🌴 Split", "24%", "rose"],
+                    ["🏰 Varaždin", "14%", "violet"],
+                  ].map(([label, pct, color], index) => (
+                    <div key={label} className={`mock-option ${index === 0 ? "selected" : ""}`}>
+                      <div className={`option-bar ${color}`} style={{ width: pct }}></div>
+                      <div className="option-content">
+                        <span className="option-label">{label}</span>
+                        <span className="option-pct">{pct}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mock-footer">
+                  <div className="mock-voters">📊 34 glasova ukupno</div>
+                  <div className="mock-chain">
+                    <span className="chain-icon">◎</span>
+                    Solana Devnet
+                  </div>
+                </div>
+                <div className="wallet-chips">
+                  <div className="wallet-chip">9xKz...4mRp</div>
+                  <div className="wallet-chip">3dPw...8hQk</div>
+                  <div className="wallet-chip">Bv7n...2jFs</div>
+                  <div className="wallet-chip">+31 više</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ─── Active Polls ───────────────────────────────────── */}
-      <section className="py-16" id="polls">
+      <section className="preview -mx-6" id="preview">
+        <div className="container">
+          <div className="preview-inner">
+            <div className="preview-text reveal visible">
+              <div className="section-tag">✦ Live Poll Preview</div>
+              <h2 className="section-title">See every vote<br /><span>as it happens</span></h2>
+              <p className="section-sub">
+                Results are fetched directly from the Solana blockchain. There is no dashboard,
+                no admin panel controlling what you see — just raw, on-chain data.
+              </p>
+
+              <div className="preview-features" style={{ marginTop: "32px" }}>
+                {[
+                  "Wallet addresses of all voters are publicly visible",
+                  "Vote counts update in real time from chain",
+                  "Every poll uses Phantom wallet authentication",
+                  "Deadline, whitelist and close-poll controls are supported",
+                ].map((text) => (
+                  <div key={text} className="preview-feat">
+                    <div className="feat-check">✓</div>
+                    {text}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="reveal visible">
+              <div className="mock-card">
+                <div className="mock-header">
+                  <div className="mock-title">{featuredPoll ? featuredPoll.account.title : "Predsjednik razreda 2025"}</div>
+                  <div className="mock-live">
+                    <div className="live-dot"></div>
+                    {featuredPoll?.account.isActive === false ? "Završeno" : "LIVE na Devnet"}
+                  </div>
+                </div>
+                <div className="mock-question">{featuredPoll ? featuredPoll.account.title : "🎓 Tko će biti predsjednik razreda?"}</div>
+                <div className="mock-options">
+                  {(featuredPoll
+                    ? featuredPoll.account.options.slice(0, 3).map((option: string, index: number) => {
+                        const votes = featuredPoll.account.votes[index].toNumber();
+                        const total = featuredPoll.account.totalVotes.toNumber();
+                        const percentage = total === 0 ? 0 : Math.round((votes / total) * 100);
+                        return [option, `${percentage}%`, index === 1 ? "rose" : index === 2 ? "violet" : ""];
+                      })
+                    : [
+                        ["👤 Ana Kovačić", "51%", ""],
+                        ["👤 Marko Horvat", "31%", "rose"],
+                        ["👤 Petra Novak", "18%", "violet"],
+                      ]
+                  ).map(([label, pct, color]: string[], index: number) => (
+                    <div key={`${label}-${index}`} className={`mock-option ${index === 0 ? "selected" : ""}`}>
+                      <div className={`option-bar ${color}`} style={{ width: pct }}></div>
+                      <div className="option-content">
+                        <span className="option-label">{label}</span>
+                        <span className="option-pct">{pct}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mock-footer">
+                  <div className="mock-voters">
+                    📊 {featuredPoll ? featuredPoll.account.totalVotes.toNumber() : 27} glasova
+                  </div>
+                  <div className="mock-chain">
+                    <span className="chain-icon">◎</span>
+                    Solana Devnet
+                  </div>
+                </div>
+                <div className="wallet-chips">
+                  <div className="wallet-chip">On-chain</div>
+                  <div className="wallet-chip">Phantom</div>
+                  <div className="wallet-chip">Anchor</div>
+                  <div className="wallet-chip">Devnet</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="benefits -mx-6" id="benefits">
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "64px" }} className="reveal visible">
+            <div className="section-tag">✦ Benefits</div>
+            <h2 className="section-title">Why blockchain <span>voting</span>?</h2>
+            <p className="section-sub" style={{ margin: "0 auto" }}>
+              Traditional voting systems rely on trust. Blockchain voting relies on math.
+            </p>
+          </div>
+
+          <div className="benefits-grid">
+            {[
+              ["🔒", "Zero Trust Required", "Ne morate vjerovati organizatoru ili serveru. Solana smart contract autonomno provodi sva pravila."],
+              ["🌍", "Publicly Auditable", "Svaki glas je javno provjerljiv, zajedno s ukupnim rezultatom i wallet adresama glasača."],
+              ["⚡", "Lightning Fast", "Solana Devnet omogućuje brzo kreiranje anketa i brzo slanje glasova putem Phantom walleta."],
+              ["💎", "Permanent Record", "Blockchain podaci su nepromjenjivi. Jednom zapisan glas ne može se izmijeniti."],
+            ].map(([icon, title, desc]) => (
+              <div key={title} className="benefit-card reveal visible">
+                <div className="benefit-icon">{icon}</div>
+                <div className="benefit-text">
+                  <h3>{title}</h3>
+                  <p>{desc}</p>
+                </div>
+              </div>
+            ))}
+            <div className="benefit-card wide reveal visible">
+              <div className="benefit-icon">🏫</div>
+              <div className="benefit-text">
+                <h3>Built for Schools — Ready for the World</h3>
+                <p>
+                  Bilo da razred bira izlet, majice ili predsjednika razreda, LIBROS daje institucionalnu razinu integriteta svakodnevnim odlukama.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24" id="polls">
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="section-tag mb-4">✦ Ankete</div>

@@ -23,6 +23,8 @@ export default function CreatePoll() {
   const [useDeadline, setUseDeadline] = useState(false);
   const [deadlineDate, setDeadlineDate] = useState("");
   const [deadlineTime, setDeadlineTime] = useState("");
+  const [useWhitelist, setUseWhitelist] = useState(false);
+  const [whitelistInput, setWhitelistInput] = useState("");
 
   const handleAddOption = () => {
     if (options.length >= 10) return;
@@ -83,11 +85,31 @@ export default function CreatePoll() {
         const deadlineTimestamp = Math.floor(
           new Date(`${deadlineDate}T${deadlineTime}`).getTime() / 1000
         );
+        if (deadlineTimestamp <= Math.floor(Date.now() / 1000)) {
+          setError("Rok glasanja mora biti u budućnosti.");
+          setIsSubmitting(false);
+          return;
+        }
         deadline = new anchor.BN(deadlineTimestamp);
       }
 
+      let whitelist: PublicKey[] | null = null;
+      if (useWhitelist && whitelistInput.trim()) {
+        try {
+          whitelist = whitelistInput
+            .split(/[\n,]+/)
+            .map((address) => address.trim())
+            .filter(Boolean)
+            .map((address) => new PublicKey(address));
+        } catch {
+          setError("Whitelist sadrži neispravnu wallet adresu.");
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       await program.methods
-        .createPoll(pollId, title, filteredOptions, deadline, null)
+        .createPoll(pollId, title, filteredOptions, deadline, whitelist)
         .accounts({
           poll: pollPda,
           author: wallet.publicKey,
@@ -318,6 +340,58 @@ export default function CreatePoll() {
                     }}
                   />
                 </div>
+              </div>
+            )}
+          </div>
+
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "28px" }}>
+            <div className="flex items-center gap-3 mb-4">
+              <button
+                type="button"
+                onClick={() => setUseWhitelist(!useWhitelist)}
+                id="toggle-whitelist"
+                className="relative w-11 h-6 rounded-full transition-all duration-300"
+                style={{
+                  background: useWhitelist ? "var(--indigo)" : "rgba(255,255,255,0.08)",
+                  border: useWhitelist ? "none" : "1px solid rgba(255,255,255,0.12)",
+                }}
+              >
+                <span
+                  className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-300"
+                  style={{
+                    transform: useWhitelist ? "translateX(20px)" : "translateX(0)",
+                  }}
+                />
+              </button>
+              <div>
+                <span className="font-display font-semibold text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
+                  Whitelist wallet adresa
+                </span>
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", marginTop: "2px" }}>
+                  Ako je uključeno, glasati mogu samo upisane adrese
+                </p>
+              </div>
+            </div>
+
+            {useWhitelist && (
+              <div className="animate-fade-in">
+                <label className="block text-xs font-medium mb-1.5" htmlFor="whitelist-addresses" style={{ color: "rgba(255,255,255,0.3)" }}>
+                  Wallet adrese, odvojene novim redom ili zarezom
+                </label>
+                <textarea
+                  id="whitelist-addresses"
+                  value={whitelistInput}
+                  onChange={(e) => setWhitelistInput(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 min-h-[110px]"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    outline: "none",
+                    color: "var(--white)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                  placeholder="9xKz...4mRp&#10;3dPw...8hQk"
+                />
               </div>
             )}
           </div>
