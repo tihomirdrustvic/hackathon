@@ -6,6 +6,23 @@ import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import { useRouter } from "next/navigation";
 
 const MIN_CREATE_BALANCE_LAMPORTS = 0.01 * LAMPORTS_PER_SOL;
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const waitForPollAvailability = async (pollPda: string) => {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const res = await fetch(`/api/poll/${pollPda}?ready=${Date.now()}`, {
+      cache: "no-store",
+    });
+
+    if (res.ok) {
+      return;
+    }
+
+    await sleep(600);
+  }
+
+  throw new Error("Anketa je kreirana, ali RPC je još ne vraća. Pokušaj otvoriti anketu za par sekundi.");
+};
 
 export default function CreatePoll() {
   const { connection } = useConnection();
@@ -152,8 +169,8 @@ export default function CreatePoll() {
       );
 
       console.log("[CreatePoll] RPC successful, signature:", signature);
-      setSuccess(`Anketa je kreirana i zapisana na Devnet. Transakcija: ${signature.slice(0, 8)}...`);
-      await new Promise((resolve) => setTimeout(resolve, 900));
+      setSuccess(`Anketa je kreirana i zapisana na Devnet. Transakcija: ${signature.slice(0, 8)}... Provjeravam dostupnost ankete.`);
+      await waitForPollAvailability(data.pollPda);
       router.push(`/poll/${data.pollPda}`);
     } catch (err: any) {
       console.error("[CreatePoll] Error:", err);

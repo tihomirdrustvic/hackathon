@@ -4,6 +4,9 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import idl from "../../../idl.json";
 import { PROGRAM_ID, RPC_ENDPOINT } from "../../../utils/program";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const toNumber = (value: any) => {
@@ -16,21 +19,24 @@ const toNumber = (value: any) => {
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const pollKey = new PublicKey(params.id);
-    const connection = new Connection(RPC_ENDPOINT);
-    const provider = new anchor.AnchorProvider(connection, {} as any, { preflightCommitment: "processed" });
+    const connection = new Connection(RPC_ENDPOINT, "confirmed");
+    const provider = new anchor.AnchorProvider(connection, {} as any, {
+      commitment: "confirmed",
+      preflightCommitment: "confirmed",
+    });
     const program = new anchor.Program({ ...idl, address: PROGRAM_ID.toString() } as any, provider) as any;
 
     let fetchedPoll: any = null;
     let fetchError: unknown = null;
 
-    for (let attempt = 0; attempt < 8; attempt += 1) {
+    for (let attempt = 0; attempt < 20; attempt += 1) {
       try {
         fetchedPoll = await program.account.poll.fetch(pollKey);
         fetchError = null;
         break;
       } catch (error) {
         fetchError = error;
-        await sleep(350);
+        await sleep(500);
       }
     }
 

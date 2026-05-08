@@ -62,9 +62,9 @@ export default function PollDetails({ params }: { params: { id: string } }) {
 
   // Live auto-refresh every 10 seconds
   useEffect(() => {
-    const interval = setInterval(fetchPollData, 10000);
+    const interval = setInterval(fetchPollData, poll ? 10000 : 1500);
     return () => clearInterval(interval);
-  }, [fetchPollData]);
+  }, [fetchPollData, poll]);
 
   const handleVote = async (index: number) => {
     if (!wallet.connected || !wallet.publicKey) {

@@ -4,6 +4,9 @@ import { Connection } from "@solana/web3.js";
 import idl from "../../idl.json";
 import { PROGRAM_ID, RPC_ENDPOINT } from "../../utils/program";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const toNumber = (value: any) => {
   if (typeof value === "number") return value;
   if (typeof value === "bigint") return Number(value);
@@ -13,8 +16,11 @@ const toNumber = (value: any) => {
 
 export async function GET() {
   try {
-    const connection = new Connection(RPC_ENDPOINT);
-    const provider = new anchor.AnchorProvider(connection, {} as any, { preflightCommitment: "processed" });
+    const connection = new Connection(RPC_ENDPOINT, "confirmed");
+    const provider = new anchor.AnchorProvider(connection, {} as any, {
+      commitment: "confirmed",
+      preflightCommitment: "confirmed",
+    });
     const program = new anchor.Program({ ...idl, address: PROGRAM_ID.toString() } as any, provider) as any;
 
     const polls = await program.account.poll.all();

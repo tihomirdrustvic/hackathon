@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "walletPubkey missing" }, { status: 400 });
     }
 
-    const connection = new Connection(RPC_ENDPOINT);
+    const connection = new Connection(RPC_ENDPOINT, "confirmed");
     const authorPublicKey = new PublicKey(walletPubkey);
     const wallet = {
       publicKey: authorPublicKey,
@@ -32,7 +32,10 @@ export async function POST(req: NextRequest) {
       signAllTransactions: async (txs: any[]) => txs,
     };
 
-    const provider = new anchor.AnchorProvider(connection, wallet, {});
+    const provider = new anchor.AnchorProvider(connection, wallet, {
+      commitment: "confirmed",
+      preflightCommitment: "confirmed",
+    });
     const program = new anchor.Program({ ...idl, address: PROGRAM_ID.toString() } as any, provider) as any;
 
     const pollIdBn = new anchor.BN(pollId);
