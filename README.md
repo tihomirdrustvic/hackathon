@@ -1,261 +1,121 @@
-# 🗳️ VoteDApp — Decentralizirana Aplikacija za Glasanje na Solana Blockchainu
+# 🗳️ VoteDApp — Decentralizirani Sustav Glasanja
 
-> **LIBROS Hackathon 2026** — Blockchain aplikacija za glasanje koristeći Solana i Anchor
+<img width="2800" height="1526" alt="image" src="https://github.com/user-attachments/assets/a6d1634e-c011-4fd5-8968-ffd41ec11151" />
 
-## 📝 Opis Projekta
+> Izgrađeno za **LIBROS Hackathon 2026** — Blockchain aplikacija za glasanje koristeći Solana i Anchor framework.
 
-VoteDApp je decentralizirana web aplikacija za glasanje izgrađena na **Solana blockchainu**. Aplikacija omogućava korisnicima kreiranje anketa i glasanje za opcije, pri čemu su svi glasovi trajno i nepromjenjivo zapisani na blockchain mreži.
+🔗 **Live Demo (Vercel):** [hackathon-ruby-nine.vercel.app](https://hackathon-ruby-nine.vercel.app/)
+📜 **Smart Contract ID (Devnet):** `GwqoDrpHQHiKWbHA6RFr84tNZbm22u8UTQABKDt8j8KM`
 
-### Ključne značajke:
-- ✅ **Phantom wallet autentifikacija** — kriptografski potvrđeni identiteti
-- ✅ **Prevencija duplog glasanja** — PDA (Program Derived Address) osigurava da svaki wallet može glasati samo jednom
-- ✅ **Trajni zapisi** — svi glasovi su nepromjenjivo zapisani na Solana Devnet
-- ✅ **Transparentnost** — javno provjerljivi rezultati s wallet adresama glasača
-- ✅ **Vremensko ograničenje** — mogućnost postavljanja roka za glasanje (bonus)
-- ✅ **Zatvaranje glasanja** — autor može zatvoriti anketu (bonus)
-- ✅ **Live osvježavanje** — automatsko osvježavanje rezultata svakih 10-15 sekundi (bonus)
-- ✅ **Docker podrška** — kontejnerizirana aplikacija (bonus)
-- ✅ **Responzivan dizajn** — radi na svim uređajima (bonus)
+## 📝 O projektu
 
-## 📂 Struktura Projekta
+VoteDApp rješava problem povjerenja i transparentnosti u izbornim procesima. Tradicionalne baze podataka podložne su manipulacijama, stoga ovaj sustav koristi **Solana blockchain** kako bi osigurao da je svaki predani glas trajan, nepromjenjiv i javno provjerljiv, dok istovremeno štiti integritet samog glasanja.
 
-```
-hackathon/
-├── voting-dapp/                  # Anchor smart contract
-│   ├── programs/
-│   │   └── voting-dapp/
-│   │       └── src/
-│   │           └── lib.rs        # Rust smart contract (create_poll, vote, close_poll, get_results)
-│   ├── tests/
-│   │   └── voting-dapp.ts        # Anchor testovi (6 test cases)
-│   ├── Anchor.toml               # Anchor konfiguracija
-│   ├── Cargo.toml
-│   └── package.json
-├── app/                          # Next.js frontend
-│   ├── app/
-│   │   ├── page.tsx              # Home stranica - prikaz svih anketa
-│   │   ├── create/
-│   │   │   └── page.tsx          # Forma za kreiranje ankete
-│   │   ├── poll/
-│   │   │   └── [id]/
-│   │   │       └── page.tsx      # Detalji ankete, glasanje, rezultati, wallet adrese
-│   │   ├── Providers.tsx         # Wallet i Connection provideri
-│   │   ├── layout.tsx            # Root layout s navigacijom
-│   │   ├── globals.css           # Globalni stilovi
-│   │   └── idl.json              # Anchor IDL za frontend
-│   ├── package.json
-│   ├── next.config.js
-│   ├── tailwind.config.js
-│   └── tsconfig.json
-├── Dockerfile                    # Docker podrška
-├── .dockerignore
-├── prompt.txt                    # Zadatak hackathona
-└── README.md                     # Dokumentacija (ovaj file)
-```
+### Ključne arhitektonske značajke
+- **Kriptografski identitet** — Autentifikacija isključivo putem Phantom walleta.
+- **Prevencija duplog glasanja (PDA)** — Program Derived Address arhitektura na razini smart contracta matematički onemogućava višestruko glasanje s iste adrese.
+- **On-Chain transparentnost** — Sva pitanja, opcije i glasovi (uključujući adrese glasača) zapisuju se direktno na Devnet.
+- **Napredne kontrole (Premium značajke)** — Implementirana vremenska ograničenja (deadlines), mogućnost ručnog zatvaranja ankete od strane autora i *Whitelist* pristup.
+- **Real-time UX** — Frontend automatski osvježava stanje s blockchaina (auto-refresh) i sadrži responzivni *Glassmorphism* UI.
 
-## 🛠️ Tehnologije
+## 🛠️ Tech Stack
 
-| Kategorija | Tehnologija |
+| Domena | Tehnologija |
 |-----------|------------|
-| Blockchain | Solana (Devnet) |
-| Smart Contract | Rust + Anchor Framework |
-| Frontend | React / Next.js 14 |
-| Styling | TailwindCSS + Glassmorphism |
-| Wallet | Phantom Wallet |
-| Jezik | TypeScript |
-| Testiranje | Mocha + Chai (Anchor Test) |
-| Kontejnerizacija | Docker |
-| OS | WSL2 / Ubuntu 22.04 LTS |
+| **Blockchain** | Solana (Devnet) |
+| **Smart Contract** | Rust + Anchor Framework |
+| **Frontend** | Next.js 14 (App Router), React, TailwindCSS |
+| **Wallet Integracija** | Solana Wallet Adapter, Phantom |
+| **Testiranje** | Mocha + Chai (Anchor testovi) |
+| **Infrastruktura** | Vercel (Web), Docker (Kontejnerizacija) |
 
-## 🚀 Postavljanje Razvojne Okoline
+## 📂 Struktura repozitorija
 
-### Preduvjeti (WSL2 / Ubuntu)
+```text
+hackathon/
+├── voting-dapp/                  # Rust Smart Contract (Anchor)
+│   ├── programs/voting-dapp/src/ # Logika contracta (lib.rs)
+│   ├── tests/                    # E2E Anchor testovi
+│   └── Anchor.toml               # Konfiguracija mreže
+├── app/                          # Next.js Web Klijent
+│   ├── app/                      # Stranice, layout i globalni stilovi
+│   ├── components/               # UI komponente (ako postoje)
+│   └── app/idl.json              # Anchor IDL za frontend interakciju
+└── Dockerfile                    # Konfiguracija za kontejnerizaciju
 
-```bash
-# 1. Instaliraj WSL2 (Windows PowerShell kao Administrator)
-wsl --install
-
-# 2. Instaliraj Node.js putem NVM-a
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-source ~/.bashrc
-nvm install --lts
-nvm use --lts
-
-# 3. Instaliraj Yarn
-npm install --global yarn
-
-# 4. Instaliraj Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source "$HOME/.cargo/env"
-
-# 5. Instaliraj Solana CLI
-sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
-export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
-
-# 6. Konfiguriraj Devnet
-solana config set --url https://api.devnet.solana.com
-solana-keygen new
-solana airdrop 2
-
-# 7. Instaliraj Anchor Framework
-cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
-avm install latest
-avm use latest
-
-# Provjeri instalacije:
-node -v && npm -v && rustc --version && solana --version && anchor --version
 ```
 
-## 📦 Build i Deploy Smart Contracta
+## 🚀 Brzi start (Lokalni razvoj)
+
+### Preduvjeti
+
+Sustav zahtijeva instalirane: `Node.js` (LTS), `Rust`, `Solana CLI` i `Anchor CLI`. Preporučuje se rad u WSL2/Ubuntu okruženju.
+
+### 1. Smart Contract (Anchor)
 
 ```bash
-# Uđi u direktorij smart contracta
 cd voting-dapp
+# Postavi mrežu na Devnet
+solana config set --url [https://api.devnet.solana.com](https://api.devnet.solana.com)
 
-# Buildaj contract
+# Buildaj i deployaj
 anchor build
-
-# Dohvati novi Program ID (nakon prvog builda)
-solana address -k target/deploy/voting_dapp-keypair.json
-
-# Ažuriraj Program ID u:
-# 1. programs/voting-dapp/src/lib.rs -> declare_id!("...")
-# 2. Anchor.toml -> [programs.devnet]
-# 3. app/app/idl.json (generira se automatski, ali provjeri)
-# 4. app/app/page.tsx, create/page.tsx, poll/[id]/page.tsx -> PROGRAM_ID
-
-# Deployaj na Devnet
 anchor deploy
 
-# Pokreni testove
+# Pokreni testove za validaciju logike
 anchor test
+
 ```
 
-## 🖥️ Pokretanje Frontend Aplikacije
+### 2. Web Klijent (Next.js)
 
 ```bash
-# Uđi u direktorij frontenda
-cd app
-
-# Instaliraj pakete
+cd ../app
 npm install
-
-# Pokreni lokalni dev server
 npm run dev
+
 ```
 
-Otvori preglednik na `http://localhost:3000`
+Aplikacija je dostupna na `http://localhost:3000`.
 
-## 🧪 Testiranje
+### 3. Docker (Opcionalno)
 
-Testovi pokrivaju sve zahtijevane scenarije:
-
-```bash
-cd voting-dapp
-anchor test
-```
-
-### Test Cases:
-1. ✅ **Kreiranje ankete** — kreira poll s naslovom, opcijama, autorom i timestampom
-2. ✅ **Uspješno glasanje** — zapisuje glas, wallet adresu, odabranu opciju i timestamp
-3. ✅ **Zabrana duplog glasanja** — PDA sprječava drugi glas s istog walleta
-4. ✅ **Prikaz rezultata** — poziva `get_results` instrukciju i verificira podatke
-5. ✅ **Zatvaranje ankete** — autor može zatvoriti glasanje
-6. ✅ **Zabrana glasanja na zatvorenoj anketi** — zatvoren poll ne prima glasove
-
-## 📋 Smart Contract — Instrukcije
-
-### `create_poll`
-Kreira novu anketu na blockchainu.
-- **Podaci:** poll_id, naslov, opcije, autor, timestamp, deadline (opcionalno), whitelist (opcionalno)
-- **Validacije:** min 2 opcije, max 10, naslov max 100 znakova
-
-### `vote`
-Omogućava glasanje na anketi.
-- **Zapisuje:** wallet adresu, odabranu opciju, timestamp
-- **Sprječava:** duplo glasanje (PDA), glasanje na zatvorenoj/istekloj anketi, glasanje neovlaštenih walleta
-
-### `close_poll`
-Zatvara anketu tako da više nitko ne može glasati. Samo autor može zatvoriti.
-
-### `get_results`
-Dohvaća rezultate glasanja i emitira event s podacima za off-chain konzumaciju.
-
-## 📊 Struktura Računa na Blockchainu
-
-### Poll Account
-| Polje | Tip | Opis |
-|-------|-----|------|
-| poll_id | u64 | Jedinstveni ID glasanja |
-| author | Pubkey | Wallet adresa autora |
-| title | String | Naslov pitanja |
-| options | Vec<String> | Opcije za glasanje |
-| votes | Vec<u64> | Broj glasova po opciji |
-| total_votes | u64 | Ukupni broj glasova |
-| timestamp | i64 | Datum kreiranja (Unix) |
-| is_active | bool | Je li glasanje aktivno |
-| deadline | Option<i64> | Rok za glasanje (Unix, opcionalno) |
-| whitelist | Vec<Pubkey> | Lista dopuštenih walleta |
-
-### Vote Record (PDA)
-| Polje | Tip | Opis |
-|-------|-----|------|
-| voter | Pubkey | Wallet adresa glasača |
-| poll | Pubkey | Referenca na anketu |
-| option_index | u32 | Indeks odabrane opcije |
-| timestamp | i64 | Datum glasanja (Unix) |
-
-## 🌐 Frontend Stranice
-
-| Stranica | Ruta | Opis |
-|----------|------|------|
-| Home | `/` | Prikaz svih anketa, statistika, live osvježavanje |
-| Create Poll | `/create` | Forma za kreiranje ankete s opcionalnim rokom |
-| Poll Details | `/poll/[id]` | Rezultati, glasanje, wallet adrese glasača |
-
-## 🦊 Phantom Wallet Integracija
-
-- ✅ Connect wallet (automatski putem Solana Wallet Adapter)
-- ✅ Disconnect wallet
-- ✅ Provjera je li wallet instaliran
-- ✅ Prikaz connected stanja i wallet adrese
-- ✅ Obrada grešaka (wallet nije spojen, nedovoljno SOL-a, itd.)
-
-## 🐳 Docker
+Za izolirano pokretanje frontenda:
 
 ```bash
-# Build Docker image
 docker build -t votedapp .
-
-# Pokreni kontejner
 docker run -p 3000:3000 votedapp
+
 ```
 
-## 🚀 Deploy na Vercel
+## 📋 Smart Contract Arhitektura
 
-1. Pushaj kod na GitHub
-2. Idi na [vercel.com](https://vercel.com)
-3. Klikni "Add New Project" i poveži GitHub repo
-4. Postavi **Root Directory** na `app`
-5. Ostavi defaultne postavke (Next.js) i klikni Deploy
+Naš Anchor program izlaže četiri glavne instrukcije za klijentsku interakciju:
 
-**Deploy link:** https://hackathon-ruby-nine.vercel.app/
+1. `create_poll` — Inicijalizira anketu. Prihvaća metapodatke (naslov, opcije) te opcionalne parametre poput roka isteka (deadline) i whiteliste dopuštenih walleta.
+2. `vote` — Glavna transakcijska metoda. Generira PDA na temelju ankete i walleta glasača. Ako PDA već postoji, transakcija se odbija (prevencija duplog glasanja).
+3. `close_poll` — Autorizirana metoda koja omogućava isključivo kreatoru ankete da ju trajno zaključa prije isteka vremena.
+4. `get_results` — Helper funkcija za strukturirano on-chain dohvaćanje trenutnog stanja.
 
-## 🏆 Bonus Funkcionalnosti
+### Struktura zapisa (Accounts)
 
-| Funkcionalnost | Status | Bodovi |
-|---------------|--------|--------|
-| Vremensko ograničenje glasanja | ✅ Implementirano | +2 |
-| Whitelist wallet adresa | ✅ Implementirano (smart contract) | +2 |
-| Live osvježavanje rezultata | ✅ Auto-refresh svakih 10-15s | +2 |
-| Docker podrška | ✅ Dockerfile + .dockerignore | +2 |
-| Deploy na Vercel | ✅ Upute dane | +1 |
-| Napredni UI/UX | ✅ Glassmorphism, animacije, responsive | +1 |
+* **Poll Account**: Sadrži ID, autora, naslov, vektor opcija, vektor glasova, timestamp kreiranja i boolean status aktivnosti.
+* **Vote Record (PDA)**: Relacijski račun koji trajno spaja `voter_pubkey` i `poll_id`, osiguravajući integritet pravila "jedan korisnik - jedan glas".
 
-## 👤 Autori
+## 🎥 Video Demonstracija
 
-Lana Baćani, Antonija Jurić, Antun Kozlović, Filip Kurel, Andrej Papić
+<video src="https://github.com/tihomirdrustvic/hackathon/raw/main/2026-05-08%2014-02-11.mp4" controls="controls" style="max-width: 100%;">
+  Vaš preglednik ne podržava video tag.
+</video>
 
-## 📄 Licenca
+## 👥 Tim
 
-MIT
+* Lana Baćani
+* Antonija Jurić
+* Antun Kozlović
+* Filip Kurel
+* Andrej Papić
+
+---
+
+*Dizajnirano i razvijeno za LIBROS Hackathon 2026.*
