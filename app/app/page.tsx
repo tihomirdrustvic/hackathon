@@ -24,7 +24,7 @@ export default function Home() {
         throw new Error("Failed to fetch polls");
       }
       const data = await res.json();
-      
+
       setPolls(
         data.polls.sort((a: any, b: any) =>
           b.account.deadline - a.account.deadline
@@ -298,16 +298,16 @@ export default function Home() {
                 <div className="mock-options">
                   {(featuredPoll
                     ? getPollOptions(featuredPoll).slice(0, 3).map((option: any, index: number) => {
-                        const votes = getOptionVotes(featuredPoll, option, index);
-                        const total = getTotalVotes(featuredPoll);
-                        const percentage = total === 0 ? 0 : Math.round((votes / total) * 100);
-                        return [getOptionLabel(option), `${percentage}%`, index === 1 ? "rose" : index === 2 ? "violet" : ""];
-                      })
+                      const votes = getOptionVotes(featuredPoll, option, index);
+                      const total = getTotalVotes(featuredPoll);
+                      const percentage = total === 0 ? 0 : Math.round((votes / total) * 100);
+                      return [getOptionLabel(option), `${percentage}%`, index === 1 ? "rose" : index === 2 ? "violet" : ""];
+                    })
                     : [
-                        ["👤 Ana Kovačić", "51%", ""],
-                        ["👤 Marko Horvat", "31%", "rose"],
-                        ["👤 Petra Novak", "18%", "violet"],
-                      ]
+                      ["👤 Ana Kovačić", "51%", ""],
+                      ["👤 Marko Horvat", "31%", "rose"],
+                      ["👤 Petra Novak", "18%", "violet"],
+                    ]
                   ).map(([label, pct, color]: string[], index: number) => (
                     <div key={`${label}-${index}`} className={`mock-option ${index === 0 ? "selected" : ""}`}>
                       <div className={`option-bar ${color}`} style={{ width: pct }}></div>
@@ -497,11 +497,10 @@ export default function Home() {
                             color: isActive
                               ? "var(--green)"
                               : "var(--rose)",
-                            border: `1px solid ${
-                              isActive
+                            border: `1px solid ${isActive
                                 ? "rgba(34, 197, 94, 0.2)"
                                 : "rgba(244, 63, 94, 0.2)"
-                            }`,
+                              }`,
                           }}
                         >
                           {isActive ? "Aktivna" : "Zatvorena"}
