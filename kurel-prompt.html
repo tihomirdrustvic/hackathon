@@ -1,66 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+<!DOCTYPE html>
+<html lang="en">
 
-.wallet-adapter-button {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  background: linear-gradient(135deg, var(--indigo), var(--rose)) !important;
-  border: none !important;
-  padding: 9px 22px !important;
-  border-radius: 100px !important;
-  transition: all 0.25s !important;
-  letter-spacing: 0.01em !important;
-}
-
-.wallet-adapter-button:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3) !important;
-}
-
-.wallet-adapter-modal-wrapper {
-  background: rgba(3, 3, 3, 0.95) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 20px !important;
-  font-family: var(--font-body) !important;
-}
-
-@layer utilities {
-  .glass {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    position: relative;
-    overflow: hidden;
-  }
-}
-
-.stagger > * {
-  animation: fadeUp 0.5s ease both;
-}
-
-input[type="text"],
-input[type="date"],
-input[type="time"] {
-  font-family: var(--font-body);
-  color: var(--white);
-}
-
-input[type="text"]::placeholder {
-  color: var(--white20);
-}
-
-.text-gradient {
-  background: linear-gradient(90deg, var(--indigo-light), var(--rose-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LIBROS — Decentralized Voting on Solana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Pixelify+Sans:wght@400..700&display=swap"
+        rel="stylesheet">
+    <style>
         /* =============================================
    CSS VARIABLES & RESET
    ============================================= */
@@ -1578,4 +1528,727 @@ input[type="text"]::placeholder {
                 height: 60px;
             }
         }
-    
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================= -->
+    <!-- NAVIGATION -->
+    <!-- ============================================= -->
+    <nav id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">LIBROS</a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how">How It Works</a></li>
+                <li><a href="#preview">Live Demo</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-cta">
+                <!-- BACKEND: Replace with wallet connect handler -->
+                <button class="btn-ghost"
+                    onclick="alert('Phantom wallet connect – backend integration pending')">Connect Wallet</button>
+                <button class="btn-primary" onclick="alert('App launch – backend integration pending')">Launch
+                    App</button>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Open menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-close" id="menuClose">✕</button>
+        <a href="#features" onclick="closeMobile()">Features</a>
+        <a href="#how" onclick="closeMobile()">How It Works</a>
+        <a href="#preview" onclick="closeMobile()">Live Demo</a>
+        <a href="#faq" onclick="closeMobile()">FAQ</a>
+        <button class="btn-primary" onclick="alert('App launch – backend pending')">Launch App →</button>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- HERO SECTION                                  -->
+    <!-- NOTE: Visual recreation of HeroGeometric      -->
+    <!-- component — identical animations/layout       -->
+    <!-- ============================================= -->
+    <section class="hero" id="hero">
+        <div class="hero-gradient-bg"></div>
+
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+
+        <div class="hero-overlay-top"></div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <div class="badge-dot"></div>
+                <span>LIBROS Hackathon 2026</span>
+            </div>
+
+            <h1 class="hero-title">
+                <span class="hero-title-line1">Vote Without</span>
+                <span class="hero-title-line2">Compromise</span>
+            </h1>
+
+            <p class="hero-sub">
+                Decentralized polling on Solana blockchain — every vote is permanent,
+                verifiable, and tamper-proof by cryptographic design.
+            </p>
+
+            <div class="hero-actions">
+                <!-- BACKEND: Connect to poll creation flow -->
+                <button class="btn-hero-primary" onclick="alert('Create Poll – backend integration pending')">
+                    Create a Poll
+                </button>
+                <!-- BACKEND: Connect to poll listing page -->
+                <button class="btn-hero-secondary"
+                    onclick="document.getElementById('preview').scrollIntoView({behavior:'smooth'})">
+                    <span>▶</span> See how it works
+                </button>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-num">100%</div>
+                    <div class="stat-label">Tamper-proof</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">&lt;1s</div>
+                    <div class="stat-label">Solana Finality</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">$0</div>
+                    <div class="stat-label">No Hidden Fees</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">∞</div>
+                    <div class="stat-label">Immutable History</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- FEATURES SECTION -->
+    <!-- ============================================= -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="features-header reveal">
+                <div class="section-tag">✦ Features</div>
+                <h2 class="section-title">Built for <span>trust</span></h2>
+                <p class="section-sub">
+                    Every feature is designed around one principle: your vote belongs to you,
+                    not to any server or administrator.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon indigo">🔐</div>
+                    <div class="feature-title">Wallet Identity</div>
+                    <p class="feature-desc">Every voter authenticates via their Phantom wallet. No accounts, no
+                        passwords — just cryptographically verified identity.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon rose">🚫</div>
+                    <div class="feature-title">No Double Voting</div>
+                    <p class="feature-desc">PDA accounts on Solana enforce one vote per wallet. The blockchain itself —
+                        not us — prevents any duplicate submissions.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon violet">📡</div>
+                    <div class="feature-title">On-Chain Storage</div>
+                    <p class="feature-desc">Polls, options, votes, and wallet addresses are all stored on Solana Devnet
+                        — no private server, no single point of failure.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon amber">⚡</div>
+                    <div class="feature-title">Sub-second Finality</div>
+                    <p class="feature-desc">Solana processes thousands of transactions per second. Your vote is
+                        confirmed and immutable in under a second.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon cyan">🔍</div>
+                    <div class="feature-title">Public Verifiability</div>
+                    <p class="feature-desc">Anyone can independently verify any vote on Solana Explorer. Full
+                        transparency — no trust required.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon green">🛡️</div>
+                    <div class="feature-title">Admin-Proof</div>
+                    <p class="feature-desc">Smart contracts enforce the rules. Once a vote is cast, not even the poll
+                        creator can modify, remove, or override it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- HOW IT WORKS -->
+    <!-- ============================================= -->
+    <section class="how" id="how">
+        <div class="container">
+            <div class="how-inner">
+                <div>
+                    <div class="section-tag reveal">✦ How It Works</div>
+                    <h2 class="section-title reveal">Three steps to <span>immutable</span> democracy</h2>
+                    <p class="section-sub reveal" style="margin-bottom: 48px;">Powered by Anchor Framework and Solana
+                        blockchain. Built in Rust for maximum security and performance.</p>
+
+                    <div class="how-steps">
+                        <div class="step">
+                            <div class="step-num">01</div>
+                            <div class="step-content">
+                                <h3>Connect your Phantom Wallet</h3>
+                                <p>No registration. Your wallet address is your identity — cryptographically verified on
+                                    every action you take.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-num">02</div>
+                            <div class="step-content">
+                                <h3>Create or Find a Poll</h3>
+                                <p>Define your question and options. The <code
+                                        style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">create_poll</code>
+                                    instruction writes your poll directly to Solana blockchain.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-num">03</div>
+                            <div class="step-content">
+                                <h3>Cast your Vote On-Chain</h3>
+                                <p>The <code
+                                        style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">vote</code>
+                                    instruction creates a PDA tied to your wallet — making double voting
+                                    cryptographically impossible.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-num">04</div>
+                            <div class="step-content">
+                                <h3>Watch Results in Real Time</h3>
+                                <p>Results are read directly from chain. No backend, no API — just raw blockchain truth,
+                                    refreshed live.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mock Poll Visualization -->
+                <div class="how-visual reveal">
+                    <div class="mock-card" id="howMockCard">
+                        <div class="mock-header">
+                            <div class="mock-title">Glasanje u tijeku</div>
+                            <div class="mock-live">
+                                <div class="live-dot"></div>
+                                LIVE na Devnet
+                            </div>
+                        </div>
+                        <div class="mock-question">🏖️ Kamo idemo na maturalno putovanje?</div>
+                        <div class="mock-options">
+                            <div class="mock-option selected">
+                                <div class="option-bar" style="width: 0%" data-target="62%"></div>
+                                <div class="option-content">
+                                    <span class="option-label">🌊 Zadar</span>
+                                    <span class="option-pct" data-num="62">0%</span>
+                                </div>
+                            </div>
+                            <div class="mock-option">
+                                <div class="option-bar rose" style="width: 0%" data-target="24%"></div>
+                                <div class="option-content">
+                                    <span class="option-label">🌴 Split</span>
+                                    <span class="option-pct" data-num="24">0%</span>
+                                </div>
+                            </div>
+                            <div class="mock-option">
+                                <div class="option-bar violet" style="width: 0%" data-target="14%"></div>
+                                <div class="option-content">
+                                    <span class="option-label">🏰 Varaždin</span>
+                                    <span class="option-pct" data-num="14">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mock-footer">
+                            <div class="mock-voters">📊 34 glasova ukupno</div>
+                            <div class="mock-chain">
+                                <span class="chain-icon">◎</span>
+                                Solana Devnet
+                            </div>
+                        </div>
+                        <div class="wallet-chips">
+                            <div class="wallet-chip">9xKz...4mRp</div>
+                            <div class="wallet-chip">3dPw...8hQk</div>
+                            <div class="wallet-chip">Bv7n...2jFs</div>
+                            <div class="wallet-chip">+31 više</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- LIVE PREVIEW SECTION -->
+    <!-- ============================================= -->
+    <section class="preview" id="preview">
+        <div class="container">
+            <div class="preview-inner">
+                <div class="preview-text reveal">
+                    <div class="section-tag">✦ Live Poll Preview</div>
+                    <h2 class="section-title">See every vote<br><span>as it happens</span></h2>
+                    <p class="section-sub">
+                        Results are fetched directly from the Solana blockchain. There's no dashboard,
+                        no admin panel controlling what you see — just raw, on-chain data.
+                    </p>
+
+                    <div class="preview-features" style="margin-top: 32px;">
+                        <div class="preview-feat">
+                            <div class="feat-check">✓</div>
+                            Wallet addresses of all voters are publicly visible
+                        </div>
+                        <div class="preview-feat">
+                            <div class="feat-check">✓</div>
+                            Vote counts update in real time from chain
+                        </div>
+                        <div class="preview-feat">
+                            <div class="feat-check">✓</div>
+                            Every transaction verifiable on Solana Explorer
+                        </div>
+                        <div class="preview-feat">
+                            <div class="feat-check">✓</div>
+                            Anchor IDL ensures type-safe blockchain calls
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <div class="mock-card">
+                        <div class="mock-header">
+                            <div class="mock-title">Predsjednik razreda 2025</div>
+                            <div class="mock-live">
+                                <div class="live-dot"></div>
+                                Završeno
+                            </div>
+                        </div>
+                        <div class="mock-question">🎓 Tko će biti predsjednik razreda?</div>
+                        <div class="mock-options">
+                            <div class="mock-option selected">
+                                <div class="option-bar" style="width:51%"></div>
+                                <div class="option-content">
+                                    <span class="option-label">👤 Ana Kovačić</span>
+                                    <span class="option-pct">51%</span>
+                                </div>
+                            </div>
+                            <div class="mock-option">
+                                <div class="option-bar rose" style="width:31%"></div>
+                                <div class="option-content">
+                                    <span class="option-label">👤 Marko Horvat</span>
+                                    <span class="option-pct">31%</span>
+                                </div>
+                            </div>
+                            <div class="mock-option">
+                                <div class="option-bar violet" style="width:18%"></div>
+                                <div class="option-content">
+                                    <span class="option-label">👤 Petra Novak</span>
+                                    <span class="option-pct">18%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mock-footer">
+                            <div class="mock-voters">📊 27 glasova · Zatvoreno</div>
+                            <div class="mock-chain">
+                                <span class="chain-icon">◎</span>
+                                Solana Devnet
+                            </div>
+                        </div>
+                        <div class="wallet-chips">
+                            <div class="wallet-chip">5mNx...7kLp</div>
+                            <div class="wallet-chip">Rq2v...9aWc</div>
+                            <div class="wallet-chip">Ht4e...3bZs</div>
+                            <div class="wallet-chip">+24 više</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- BENEFITS -->
+    <!-- ============================================= -->
+    <section class="benefits" id="benefits">
+        <div class="container">
+            <div style="text-align:center; margin-bottom: 64px;" class="reveal">
+                <div class="section-tag">✦ Benefits</div>
+                <h2 class="section-title">Why blockchain <span>voting</span>?</h2>
+                <p class="section-sub" style="margin: 0 auto;">Traditional voting systems rely on trust. Blockchain
+                    voting relies on math.</p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card reveal">
+                    <div class="benefit-icon">🔒</div>
+                    <div class="benefit-text">
+                        <h3>Zero Trust Required</h3>
+                        <p>You don't need to trust us, the organizer, or any server. The Solana smart contract enforces
+                            all rules autonomously.</p>
+                    </div>
+                </div>
+                <div class="benefit-card reveal">
+                    <div class="benefit-icon">🌍</div>
+                    <div class="benefit-text">
+                        <h3>Publicly Auditable</h3>
+                        <p>Every vote is a public transaction. Anyone, anywhere can audit the entire voting history
+                            without special access.</p>
+                    </div>
+                </div>
+                <div class="benefit-card reveal">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-text">
+                        <h3>Lightning Fast</h3>
+                        <p>Solana's 65,000 TPS means no waiting. Votes confirm in under a second even during peak usage.
+                        </p>
+                    </div>
+                </div>
+                <div class="benefit-card reveal">
+                    <div class="benefit-icon">💎</div>
+                    <div class="benefit-text">
+                        <h3>Permanent Record</h3>
+                        <p>Blockchain data is immutable. Once a vote is recorded, it exists forever — no deletions, no
+                            revisions.</p>
+                    </div>
+                </div>
+                <div class="benefit-card wide reveal">
+                    <div class="benefit-icon">🏫</div>
+                    <div class="benefit-text">
+                        <h3>Built for Schools — Ready for the World</h3>
+                        <p>Whether it's choosing a class trip destination or electing a student president, LIBROS brings
+                            institutional-grade integrity to everyday decisions. The same technology securing billions
+                            in DeFi, now in your classroom.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- TESTIMONIALS -->
+    <!-- ============================================= -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="testimonials-header reveal">
+                <div class="section-tag">✦ Testimonials</div>
+                <h2 class="section-title">What people <span>are saying</span></h2>
+                <p class="section-sub">Early users from schools and student organizations across Croatia.</p>
+            </div>
+
+            <div class="testi-grid">
+                <div class="testi-card reveal">
+                    <div class="testi-stars">★★★★★</div>
+                    <p class="testi-text">"We used LIBROS to vote for our school trip. Nobody could argue the results —
+                        everything was on the blockchain for everyone to verify."</p>
+                    <div class="testi-author">
+                        <div class="testi-avatar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">AK
+                        </div>
+                        <div>
+                            <div class="testi-name">Ana K.</div>
+                            <div class="testi-role">Razredna predsjednica, Zagreb</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testi-card reveal">
+                    <div class="testi-stars">★★★★★</div>
+                    <p class="testi-text">"The Phantom wallet integration is seamless. Students were voting in seconds
+                        without any technical knowledge."</p>
+                    <div class="testi-author">
+                        <div class="testi-avatar" style="background: linear-gradient(135deg, #f43f5e, #f59e0b);">MT
+                        </div>
+                        <div>
+                            <div class="testi-name">Matej T.</div>
+                            <div class="testi-role">Student, Informatika, Split</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testi-card reveal">
+                    <div class="testi-stars">★★★★★</div>
+                    <p class="testi-text">"Finally a voting system where the admin literally cannot cheat. The PDA
+                        double-vote prevention is brilliant engineering."</p>
+                    <div class="testi-author">
+                        <div class="testi-avatar" style="background: linear-gradient(135deg, #06b6d4, #6366f1);">LP
+                        </div>
+                        <div>
+                            <div class="testi-name">Luka P.</div>
+                            <div class="testi-role">Solana Developer, Rijeka</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- FAQ -->
+    <!-- ============================================= -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="faq-header reveal">
+                <div class="section-tag">✦ FAQ</div>
+                <h2 class="section-title">Common <span>questions</span></h2>
+                <p class="section-sub">Everything you need to know about blockchain voting with LIBROS.</p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Do I need to pay to vote?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Voting on Solana Devnet is completely free. On mainnet, each vote
+                            costs a tiny fraction of SOL (typically less than $0.001) to cover the blockchain
+                            transaction fee. No hidden costs, no subscriptions.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How does double-vote prevention work?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Each vote creates a Program Derived Address (PDA) derived from
+                            your wallet address and the poll ID. This PDA can only be created once — if you try to vote
+                            again, Solana rejects the transaction because the PDA already exists. This is enforced by
+                            the blockchain, not by us.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Can the poll creator change the results?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">No. Once a vote is submitted to the blockchain, it is immutable.
+                            The Anchor smart contract does not have any admin override function — not even the contract
+                            deployer can modify vote counts or remove votes.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        What wallet do I need?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">You need Phantom Wallet — available as a browser extension for
+                            Chrome, Firefox, and Brave, and as a mobile app for iOS and Android. Make sure to switch it
+                            to Devnet in the settings when testing. Phantom is free to install and use.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Is my vote anonymous?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Votes are pseudonymous — your wallet address is publicly recorded,
+                            but it doesn't directly reveal your real identity unless you've linked your wallet to your
+                            personal information elsewhere. The transparency trade-off is intentional: it enables public
+                            auditability.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        What happens when a poll closes?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Poll data remains permanently on the blockchain even after
+                            closing. All votes, wallet addresses, and final results are preserved forever and can be
+                            independently verified by anyone with the poll's address.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- CTA BANNER -->
+    <!-- ============================================= -->
+    <section class="cta-banner">
+        <div class="container">
+            <div class="cta-inner reveal">
+                <h2 class="cta-title">Ready to vote<br><span
+                        style="background: linear-gradient(90deg, var(--indigo-light), var(--rose-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">on
+                        the blockchain?</span></h2>
+                <p class="cta-sub">Connect your Phantom wallet and create your first tamper-proof poll in under 60
+                    seconds.</p>
+                <div class="cta-actions">
+                    <!-- BACKEND: Connect to app launch -->
+                    <button class="btn-cta" onclick="alert('App launch – backend integration pending')">Launch App
+                        →</button>
+                    <a href="https://github.com/AndoreJ/hackathon" target="_blank" style="text-decoration:none;">
+                        <button class="btn-cta-ghost">View on GitHub</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- FOOTER -->
+    <!-- ============================================= -->
+    <footer>
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="nav-logo"
+                        style="font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: -0.5px; background: linear-gradient(90deg, #a5b4fc, #fda4af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        LIBROS</div>
+                    <p>Decentralized voting built on Solana blockchain. Powered by Anchor Framework and Phantom Wallet.
+                    </p>
+                    <div class="solana-badge" style="margin-top:16px;">
+                        <span>◎</span> Built on Solana Devnet
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how">How It Works</a></li>
+                        <li><a href="#preview">Live Demo</a></li>
+                        <!-- BACKEND: Link to actual app pages -->
+                        <li><a href="#">Create Poll</a></li>
+                        <li><a href="#">Browse Polls</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Developers</h4>
+                    <ul>
+                        <li><a href="https://docs.solana.com" target="_blank">Solana Docs</a></li>
+                        <li><a href="https://anchor-lang.com" target="_blank">Anchor Framework</a></li>
+                        <li><a href="https://phantom.app" target="_blank">Phantom Wallet</a></li>
+                        <!-- BACKEND: Add GitHub link -->
+                        <li><a href="#">GitHub Repo</a></li>
+                        <li><a href="#">Smart Contract</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Hackathon</h4>
+                    <ul>
+                        <li><a href="#">LIBROS 2026</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">README</a></li>
+                        <li><a href="#">Team</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 LIBROS Hackathon. All votes recorded on Solana Devnet.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================= -->
+    <script>
+        // --- NAV SCROLL ---
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // --- MOBILE MENU ---
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.add('open');
+        });
+        document.getElementById('menuClose').addEventListener('click', closeMobile);
+        function closeMobile() {
+            document.getElementById('mobileMenu').classList.remove('open');
+        }
+
+        // --- FAQ ACCORDION ---
+        function toggleFaq(btn) {
+            const item = btn.closest('.faq-item');
+            const answer = item.querySelector('.faq-answer');
+            const isOpen = item.classList.contains('open');
+
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(i => {
+                i.classList.remove('open');
+                i.querySelector('.faq-answer').style.maxHeight = '0';
+            });
+
+            // Open this one if it was closed
+            if (!isOpen) {
+                item.classList.add('open');
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+        }
+
+        // --- SCROLL REVEAL ---
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        reveals.forEach(el => observer.observe(el));
+
+        // --- STEP REVEAL ---
+        const steps = document.querySelectorAll('.step');
+        const stepObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 150);
+                    stepObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        steps.forEach(el => stepObserver.observe(el));
+
+        // --- ANIMATED POLL BARS (How It Works section) ---
+        const pollCard = document.getElementById('howMockCard');
+        const pollObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                setTimeout(() => {
+                    const bars = pollCard.querySelectorAll('.option-bar[data-target]');
+                    const pcts = pollCard.querySelectorAll('.option-pct[data-num]');
+
+                    bars.forEach(bar => {
+                        bar.style.width = bar.dataset.target;
+                    });
+
+                    pcts.forEach(pct => {
+                        const target = parseInt(pct.dataset.num);
+                        let current = 0;
+                        const step = target / 60;
+                        const interval = setInterval(() => {
+                            current = Math.min(current + step, target);
+                            pct.textContent = Math.round(current) + '%';
+                            if (current >= target) clearInterval(interval);
+                        }, 25);
+                    });
+                }, 400);
+                pollObserver.unobserve(pollCard);
+            }
+        }, { threshold: 0.4 });
+        if (pollCard) pollObserver.observe(pollCard);
+    </script>
+</body>
+
+</html>

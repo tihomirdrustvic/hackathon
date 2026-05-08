@@ -1,13 +1,7 @@
 import "./globals.css";
 import Providers from "./Providers";
-import dynamic from "next/dynamic";
 import Link from "next/link";
-
-const WalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
+import WalletButton from "./WalletButton";
 
 export const metadata = {
   title: "LIBROS — Decentralizirano Glasanje na Solana Blockchainu",
@@ -61,7 +55,7 @@ export default function RootLayout({
                 >
                   Kreiraj Anketu
                 </Link>
-                <WalletMultiButtonDynamic />
+                <WalletButton />
               </div>
             </div>
           </nav>
