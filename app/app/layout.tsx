@@ -73,7 +73,7 @@ export default function RootLayout({
           </nav>
 
           {/* ─── Main Content ───────────────────────────────── */}
-          <main className="w-full pt-24 pb-12 min-h-screen relative z-10 overflow-hidden">
+          <main className="w-full pt-32 sm:pt-24 pb-12 min-h-screen relative z-10 overflow-hidden">
             {children}
           </main>
 
