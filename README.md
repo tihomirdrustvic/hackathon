@@ -1,4 +1,3 @@
-```markdown
 # 🗳️ VoteDApp — Decentralizirani Sustav Glasanja
 
 > Izgrađeno za **LIBROS Hackathon 2026** — Blockchain aplikacija za glasanje koristeći Solana i Anchor framework.
